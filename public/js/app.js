@@ -35,6 +35,19 @@ document.addEventListener('DOMContentLoaded', () => {
 
         closeChatButton.addEventListener('click', () => {
             chatContainer.style.display = 'none';
+            // Borrar la memoria de la sesión (para que n8n arranque de cero la próxima vez)
+            localStorage.removeItem('chatSessionId');
+            
+            // Limpiar visualmente el chat log y reestablecer el mensaje inicial
+            chatLog.innerHTML = `
+            <div class="message bot self-start bg-gray-100 text-brand-navy p-3 rounded-2xl rounded-tl-sm text-sm font-sans max-w-[85%] shadow-sm">
+                Hola, soy tu asistente virtual. ¿En qué puedo ayudarte hoy?
+            </div>`;
+            
+            // Re-agregar los botones de consulta rápida
+            if (typeof appendQuickActions === 'function') {
+                appendQuickActions();
+            }
         });
 
         sendButton.addEventListener('click', sendMessage);
@@ -62,16 +75,22 @@ document.addEventListener('DOMContentLoaded', () => {
         botMessageDiv.className = 'message bot';
         botMessageDiv.textContent = 'Escribiendo...';
         chatLog.appendChild(botMessageDiv);
+        
+        // Quitar sugerencias previas al enviar nuevo mensaje
+        const oldActions = chatLog.querySelectorAll('.quick-actions');
+        oldActions.forEach(el => el.remove());
+        
         chatLog.scrollTop = chatLog.scrollHeight;
 
-        // Configuración del payload para la API de Gemini
-        // NOTA: La API Key debe configurarse aquí o idealmente usarse a través de un backend para no exponerla.
-        const API_URL = "https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash-preview-05-20:generateContent?key=";
+        // Enviar la petición a nuestro backend (Proxy n8n)
+        const API_URL = "/api/chat";
+        // Generar un ID de sesión simple o usar uno existente
+        const sessionId = localStorage.getItem('chatSessionId') || `session_${Math.random().toString(36).substring(2, 15)}`;
+        localStorage.setItem('chatSessionId', sessionId);
+
         const payload = {
-            contents: [{ parts: [{ text: userMessage }] }],
-            systemInstruction: {
-                parts: [{ text: "Actúa como un agente de soporte al cliente de una empresa de internet llamada Conexiones Argentinas. Sé amigable, servicial y conciso. Proporciona información sobre los planes, la cobertura de fibra óptica y resuelve dudas técnicas básicas. Siempre mantén una actitud positiva y profesional. Evita información que no esté relacionada con la empresa. Si no puedes responder, sugiere contactar a un agente humano en el correo info@conexionesargentinas.com.ar o en el número (11) 1234-5678." }]
-            }
+            message: userMessage,
+            sessionId: sessionId
         };
 
         try {
@@ -82,15 +101,63 @@ document.addEventListener('DOMContentLoaded', () => {
             });
 
             const result = await response.json();
-            const botResponse = result.candidates?.[0]?.content?.parts?.[0]?.text;
-
-            botMessageDiv.textContent = botResponse || 'Lo siento, no pude encontrar una respuesta. Por favor, intenta de nuevo o contacta a un agente.';
+            
+            if (result.status === 'success') {
+                botMessageDiv.textContent = result.reply;
+            } else {
+                botMessageDiv.textContent = result.reply || 'Lo siento, no pude procesar tu mensaje. Intenta de nuevo.';
+                if (result.isMaintenance) {
+                    botMessageDiv.classList.add('text-red-500'); // Opcional para destacar
+                }
+            }
+            
+            // Mostrar opciones rápidas si no estamos en mantenimiento
+            if (result.status === 'success') {
+                appendQuickActions();
+            }
+            
         } catch (error) {
-            console.error('Error al llamar a la API de Gemini:', error);
-            botMessageDiv.textContent = 'Hubo un error al procesar tu solicitud. Por favor, intenta de nuevo.';
+            console.error('Error de red al contactar al backend:', error);
+            botMessageDiv.textContent = 'Hubo un error de conexión. Por favor, revisa tu internet o intenta de nuevo.';
         } finally {
             chatLog.scrollTop = chatLog.scrollHeight;
         }
+    }
+
+    // Función para mostrar tarjetas de consulta rápida en el chat
+    function appendQuickActions() {
+        const actionsContainer = document.createElement('div');
+        actionsContainer.className = 'quick-actions flex flex-wrap gap-2 mt-2';
+        
+        const actions = [
+            { label: 'Pagar mi factura', message: 'Quiero pagar mi factura' },
+            { label: 'Soporte Técnico', message: 'Necesito soporte técnico' },
+            { label: 'Promesa de pago', message: 'Solicitar promesa de pago' }
+        ];
+
+        actions.forEach(action => {
+            const btn = document.createElement('button');
+            btn.className = 'bg-white border border-brand-lightblue text-brand-cobalt text-xs font-semibold py-1.5 px-3 rounded-full hover:bg-brand-lightblue hover:text-white transition-colors shadow-sm';
+            btn.textContent = action.label;
+            btn.addEventListener('click', () => {
+                chatInput.value = action.message;
+                sendMessage();
+            });
+            actionsContainer.appendChild(btn);
+        });
+
+        chatLog.appendChild(actionsContainer);
+        chatLog.scrollTop = chatLog.scrollHeight;
+    }
+    
+    // Mostrar sugerencias iniciales al cargar (opcional, o dejar que el bot inicial las renderice)
+    if (chatButton) {
+        // Ejecutamos una vez cuando abren el chat si está vacío
+        chatButton.addEventListener('click', () => {
+            if (chatLog.children.length === 1) { // Solo está el mensaje inicial
+                appendQuickActions();
+            }
+        }, { once: true });
     }
 
     /* --- Logic for Dark Mode Toggle --- */
