@@ -1,0 +1,246 @@
+<!DOCTYPE html>
+<html lang="es" class="scroll-smooth">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Conexiones Argentinas - Internet de alta velocidad</title>
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&family=Montserrat:wght@400;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="css/style.css">
+</head>
+
+<body class="bg-white text-brand-navy font-sans antialiased transition-colors duration-300 overflow-x-hidden relative">
+
+    <!-- Header / Navbar -->
+    <header class="fixed top-4 left-0 right-0 z-50 px-4 md:px-8">
+        <div class="container mx-auto">
+            <div class="bg-white/70 backdrop-blur-md shadow-lg rounded-2xl border border-white/40 px-6 py-4 flex flex-wrap justify-between items-center transition-all duration-300">
+                
+                <!-- Logo Area -->
+                <a href="#" class="flex flex-col items-start group relative z-10">
+                    <div class="flex items-center">
+                        <!-- Placeholder for actual logo image -->
+                        <div class="flex items-center text-brand-cobalt">
+                            <svg class="w-8 h-8 mr-2" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                <path d="M5 12.55a11 11 0 0 1 14.08 0"></path>
+                                <path d="M1.42 9a16 16 0 0 1 21.16 0"></path>
+                                <path d="M8.53 16.11a6 6 0 0 1 6.95 0"></path>
+                                <circle cx="12" cy="20" r="1" fill="currentColor"></circle>
+                            </svg>
+                            <span class="text-2xl font-montserrat tracking-wide flex items-center">
+                                <span class="font-normal text-gray-700">CONEXIONES</span>
+                                <span class="font-bold text-brand-lightblue">ARGENTINAS</span>
+                            </span>
+                        </div>
+                    </div>
+                    <span class="text-[10px] text-gray-500 font-sans italic self-end uppercase tracking-widest mr-1">Internet inalámbrico</span>
+                </a>
+
+                <!-- Mobile menu button -->
+                <div class="flex items-center md:hidden gap-3">
+                    <button id="mobile-menu-btn" class="p-2 text-brand-navy focus:outline-none rounded-md hover:bg-gray-100/50">
+                        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16m-7 6h7"></path>
+                        </svg>
+                    </button>
+                </div>
+
+                <!-- Navigation Links -->
+                <nav id="navbar-menu" class="hidden absolute top-full left-0 right-0 bg-white/95 backdrop-blur-md px-6 pb-6 rounded-b-2xl shadow-xl border-b border-white/40 md:static md:bg-transparent md:backdrop-blur-none md:p-0 md:rounded-none md:shadow-none md:border-none md:flex w-full md:w-auto md:items-center mt-4 md:mt-0 transition-all font-montserrat text-sm font-semibold tracking-wide">
+                    <ul class="flex flex-col md:flex-row md:space-x-8 space-y-4 md:space-y-0 text-center md:text-left mt-4 md:mt-0">
+                        <li><a href="#" class="block text-brand-navy hover:text-brand-cobalt transition-colors border-b-2 border-brand-cobalt pb-1">INICIO</a></li>
+                        <li><a href="#planes" class="block text-brand-navy hover:text-brand-cobalt transition-colors pb-1">SERVICIOS</a></li>
+                        <li><a href="#" class="block text-brand-navy hover:text-brand-cobalt transition-colors pb-1">COBERTURA</a></li>
+                        <li><a href="#contacto" class="block text-brand-navy hover:text-brand-cobalt transition-colors pb-1">SOPORTE</a></li>
+                        <li class="hidden">
+                            <!-- Hidden link to keep chatbot trigger compatible if needed -->
+                            <a href="#" id="nav-assistant-link">Asistente</a>
+                        </li>
+                    </ul>
+                </nav>
+            </div>
+        </div>
+    </header>
+
+    <!-- Hero Section -->
+    <section class="bg-waves min-h-screen flex items-center pt-24 pb-16 relative">
+        <div class="container mx-auto px-6 md:px-12 relative z-10 flex flex-col md:flex-row items-center">
+            
+            <div class="w-full md:w-1/2 text-center md:text-left pt-10">
+                <h1 class="text-4xl md:text-5xl lg:text-6xl font-montserrat font-bold text-brand-navy leading-tight mb-6">
+                    INTERNET INALÁMBRICO DE ALTA GAMA PARA TODA ARGENTINA
+                </h1>
+                <p class="text-lg md:text-xl text-gray-600 font-light mb-10 max-w-lg mx-auto md:mx-0">
+                    Conexión estable y segura donde más la necesitas.
+                </p>
+                
+                <div class="flex flex-col sm:flex-row justify-center md:justify-start items-center space-y-4 sm:space-y-0 sm:space-x-4">
+                    <button id="hero-consultar-btn" class="bg-brand-cobalt text-white font-montserrat font-semibold py-4 px-8 rounded-full shadow-[0_8px_20px_rgba(10,75,143,0.3)] hover:shadow-[0_10px_25px_rgba(10,75,143,0.5)] hover:-translate-y-1 transition-all flex items-center">
+                        CONSULTAR DEUDA Y PAGAR
+                        <svg class="w-5 h-5 ml-2" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 10h18M7 15h1m4 0h1m-7 4h12a3 3 0 003-3V8a3 3 0 00-3-3H6a3 3 0 00-3 3v8a3 3 0 003 3z"></path></svg>
+                    </button>
+                    <button class="bg-transparent border-2 border-brand-cobalt text-brand-cobalt font-montserrat font-semibold py-4 px-8 rounded-full hover:bg-brand-cobalt/5 transition-all">
+                        MÁS INFORMACIÓN
+                    </button>
+                </div>
+            </div>
+            
+            <!-- Graphic side (Map placeholder) -->
+            <div class="w-full md:w-1/2 mt-16 md:mt-0 flex justify-center relative">
+                <!-- If you have an Argentina map SVG, it would go here -->
+                <div class="w-64 h-96 bg-brand-lightblue/10 rounded-full blur-3xl absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2"></div>
+            </div>
+
+        </div>
+    </section>
+
+    <!-- Planes (Servicios) Section -->
+    <section id="planes" class="py-24 bg-gray-50/50">
+        <div class="container mx-auto px-6 text-center">
+            <h2 class="text-3xl font-montserrat font-bold text-brand-navy mb-16 tracking-wide">SERVICIOS Y PLANES</h2>
+            
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-10 max-w-5xl mx-auto">
+                <!-- Plan Básico -->
+                <div class="bg-white p-10 rounded-3xl shadow-[0_10px_40px_-10px_rgba(0,0,0,0.05)] border border-gray-100 hover:shadow-[0_20px_50px_-10px_rgba(10,75,143,0.1)] hover:-translate-y-2 transition-all duration-300">
+                    <div class="w-16 h-16 bg-brand-lightblue/10 rounded-2xl flex items-center justify-center mx-auto mb-6 text-brand-cobalt">
+                        <svg class="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6"></path></svg>
+                    </div>
+                    <h3 class="text-xl font-montserrat font-bold text-brand-navy mb-2">HOGAR (Básico)</h3>
+                    <div class="my-6">
+                        <span class="text-5xl font-light text-brand-cobalt">10</span>
+                        <span class="text-lg text-gray-400 font-semibold">Mbps</span>
+                    </div>
+                    <p class="text-gray-500 mb-8 text-sm">Ideal para un uso ligero, navegación y redes sociales.</p>
+                    <a href="#" class="block w-full py-3 rounded-full text-brand-cobalt font-semibold border border-brand-cobalt hover:bg-brand-cobalt hover:text-white transition-colors">Ver Detalles</a>
+                </div>
+
+                <!-- Plan Premium -->
+                <div class="bg-white p-10 rounded-3xl shadow-[0_10px_40px_-10px_rgba(10,75,143,0.15)] border-2 border-brand-lightblue relative hover:-translate-y-2 transition-all duration-300 transform scale-105">
+                    <div class="absolute -top-4 left-1/2 transform -translate-x-1/2 bg-gradient-to-r from-brand-cobalt to-brand-lightblue text-white text-xs font-bold py-1 px-4 rounded-full">
+                        MÁS ELEGIDO
+                    </div>
+                    <div class="w-16 h-16 bg-brand-lightblue/10 rounded-2xl flex items-center justify-center mx-auto mb-6 text-brand-cobalt">
+                        <svg class="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 13.255A23.931 23.931 0 0112 15c-3.183 0-6.22-.62-9-1.745M16 6V4a2 2 0 00-2-2h-4a2 2 0 00-2 2v2m4 6h.01M5 20h14a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"></path></svg>
+                    </div>
+                    <h3 class="text-xl font-montserrat font-bold text-brand-navy mb-2">EMPRESAS (Premium)</h3>
+                    <div class="my-6">
+                        <span class="text-5xl font-light text-brand-cobalt">15</span>
+                        <span class="text-lg text-gray-400 font-semibold">Mbps</span>
+                    </div>
+                    <p class="text-gray-500 mb-8 text-sm">Perfecto para hogares múltiples o pequeños negocios.</p>
+                    <a href="#" class="block w-full py-3 rounded-full bg-brand-cobalt text-white font-semibold shadow-lg hover:bg-brand-navy transition-colors">Ver Detalles</a>
+                </div>
+
+                <!-- Plan Pro -->
+                <div class="bg-white p-10 rounded-3xl shadow-[0_10px_40px_-10px_rgba(0,0,0,0.05)] border border-gray-100 hover:shadow-[0_20px_50px_-10px_rgba(10,75,143,0.1)] hover:-translate-y-2 transition-all duration-300">
+                    <div class="w-16 h-16 bg-brand-lightblue/10 rounded-2xl flex items-center justify-center mx-auto mb-6 text-brand-cobalt">
+                        <svg class="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4"></path></svg>
+                    </div>
+                    <h3 class="text-xl font-montserrat font-bold text-brand-navy mb-2">P. DIGITALES (Pro)</h3>
+                    <div class="my-6">
+                        <span class="text-5xl font-light text-brand-cobalt">20</span>
+                        <span class="text-lg text-gray-400 font-semibold">Mbps</span>
+                    </div>
+                    <p class="text-gray-500 mb-8 text-sm">Para usuarios exigentes, alto tráfico y teletrabajo.</p>
+                    <a href="#" class="block w-full py-3 rounded-full text-brand-cobalt font-semibold border border-brand-cobalt hover:bg-brand-cobalt hover:text-white transition-colors">Ver Detalles</a>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer id="contacto" class="bg-brand-navy text-white py-16">
+        <div class="container mx-auto px-6 text-center md:text-left">
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-12">
+                <div>
+                    <h3 class="text-xl font-montserrat font-bold mb-4 text-brand-lightblue">CONEXIONES ARGENTINAS</h3>
+                    <p class="text-gray-400 text-sm font-light leading-relaxed">Proveyendo internet estable y de alta gama en toda la región.</p>
+                </div>
+                <div>
+                    <h3 class="text-lg font-montserrat font-semibold mb-4">Contacto</h3>
+                    <p class="text-gray-400 text-sm mb-2 font-light">WhatsApp: 261 614-4088</p>
+                    <p class="text-gray-400 text-sm font-light">Email: info@conexionesargentinas.com</p>
+                </div>
+                <div>
+                    <h3 class="text-lg font-montserrat font-semibold mb-4">Síguenos</h3>
+                    <div class="flex space-x-6 justify-center md:justify-start">
+                        <a href="#" class="text-gray-400 hover:text-white transition-colors"><svg class="w-6 h-6" fill="currentColor" viewBox="0 0 24 24"><path d="M22 12c0-5.523-4.477-10-10-10S2 6.477 2 12c0 4.991 3.657 9.128 8.438 9.878v-6.987h-2.54V12h2.54V9.797c0-2.506 1.492-3.89 3.777-3.89 1.094 0 2.238.195 2.238.195v2.46h-1.26c-1.243 0-1.63.771-1.63 1.562V12h2.773l-.443 2.89h-2.33v6.988C18.343 21.128 22 16.991 22 12z"></path></svg></a>
+                        <a href="#" class="text-gray-400 hover:text-white transition-colors"><svg class="w-6 h-6" fill="currentColor" viewBox="0 0 24 24"><path d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zM12 0C8.741 0 8.333.014 7.053.072 2.695.272.273 2.69.073 7.052.014 8.333 0 8.741 0 12c0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98C8.333 23.986 8.741 24 12 24c3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98C15.668.014 15.259 0 12 0zm0 5.838a6.162 6.162 0 100 12.324 6.162 6.162 0 000-12.324zM12 16a4 4 0 110-8 4 4 0 010 8zm6.406-11.845a1.44 1.44 0 100 2.881 1.44 1.44 0 000-2.881z"></path></svg></a>
+                    </div>
+                </div>
+            </div>
+            <div class="border-t border-gray-800 mt-12 pt-8 text-center text-gray-500 text-xs">
+                &copy; 2026 Conexiones Argentinas. Todos los derechos reservados.
+            </div>
+        </div>
+    </footer>
+
+    <!-- Floating Chat Button (Glassmorphism & Cobalt) -->
+    <button id="chat-button" class="fixed bottom-6 right-6 z-50 bg-brand-cobalt text-white p-4 rounded-full shadow-[0_8px_20px_rgba(10,75,143,0.4)] hover:scale-110 hover:shadow-[0_12px_25px_rgba(10,75,143,0.6)] transition-all flex items-center justify-center">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" class="h-7 w-7"><path fill="currentColor" d="M20 2H4c-1.1 0-2 .9-2 2v18l4-4h14c1.1 0 2-.9 2-2V4c0-1.1-.9-2-2-2zm0 14H6l-2 2V4h16v12zM9 11h2v2H9v-2zm4 0h2v2h-2v-2zm4 0h2v2h-2v-2z" /></svg>
+    </button>
+
+    <!-- Chat Container (Glassmorphism) -->
+    <div id="chat-container" class="fixed bottom-24 right-6 z-50 w-80 max-w-[calc(100vw-3rem)] hidden flex-col bg-white/80 backdrop-blur-xl rounded-2xl shadow-2xl border border-white/50 overflow-hidden">
+        <div class="p-4 bg-brand-cobalt text-white flex justify-between items-center">
+            <div class="flex items-center gap-2">
+                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 11a7 7 0 01-7 7m0 0a7 7 0 01-7-7m7 7v4m0 0H8m4 0h4m-4-8a3 3 0 01-3-3V5a3 3 0 116 0v6a3 3 0 01-3 3z"></path></svg>
+                <h4 class="font-montserrat font-semibold text-sm">Soporte Virtual</h4>
+            </div>
+            <button id="close-chat-button" class="text-white/80 hover:text-white transition-colors">
+                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" class="h-6 w-6"><path fill="currentColor" d="M19 6.41L17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z" /></svg>
+            </button>
+        </div>
+        
+        <div id="chat-log" class="flex-1 h-64 overflow-y-auto p-4 flex flex-col gap-3 bg-transparent">
+            <!-- Messages will be styled via CSS or JS, but default bot message goes here -->
+            <div class="message bot self-start bg-gray-100 text-brand-navy p-3 rounded-2xl rounded-tl-sm text-sm font-sans max-w-[85%] shadow-sm">
+                Hola, soy tu asistente virtual. ¿En qué puedo ayudarte hoy?
+            </div>
+        </div>
+        
+        <div id="chat-input-container" class="border-t border-gray-200/50 p-3 flex bg-white/50">
+            <input type="text" id="chat-input" placeholder="Escribe tu mensaje..." class="flex-grow p-3 bg-white/70 border border-gray-200 rounded-full text-sm focus:outline-none focus:border-brand-lightblue focus:ring-1 focus:ring-brand-lightblue transition-all">
+            <button id="send-button" class="ml-2 bg-brand-cobalt text-white p-3 rounded-full hover:bg-brand-navy transition-colors flex items-center justify-center">
+                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" class="h-5 w-5"><path fill="currentColor" d="M2.01 21L23 12 2.01 3 2 10l15 2-15 2z" /></svg>
+            </button>
+        </div>
+    </div>
+
+    <!-- Hidden elements kept for compatibility with existing app.js if needed -->
+    <div class="hidden">
+        <button id="theme-toggle"></button>
+        <svg id="theme-toggle-light-icon"></svg>
+        <svg id="theme-toggle-dark-icon"></svg>
+        <input id="usage-input" />
+        <button id="recommend-button"></button>
+        <div id="recommendation-output"></div>
+    </div>
+
+    <script src="js/app.js"></script>
+    <script>
+        // Lógica adicional específica para el botón hero "Consultar Deuda y Pagar"
+        document.addEventListener('DOMContentLoaded', () => {
+            const heroConsultarBtn = document.getElementById('hero-consultar-btn');
+            const chatContainer = document.getElementById('chat-container');
+            const chatInput = document.getElementById('chat-input');
+            
+            if (heroConsultarBtn && chatContainer) {
+                heroConsultarBtn.addEventListener('click', (e) => {
+                    e.preventDefault();
+                    chatContainer.style.display = 'flex';
+                    // Auto-fill and optional focus
+                    if (chatInput) {
+                        chatInput.value = "Quiero consultar mi deuda";
+                        chatInput.focus();
+                    }
+                });
+            }
+        });
+    </script>
+</body>
+
+</html>
