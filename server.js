@@ -4,7 +4,7 @@ const path = require('path');
 const axios = require('axios');
 
 const app = express();
-const PORT = process.env.PORT || 3000;
+const PORT = process.env.PORT || 3005;
 
 // Configuración de reintentos para el bot
 const MAX_RETRIES = 2;
