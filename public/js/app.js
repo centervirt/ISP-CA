@@ -104,6 +104,8 @@ document.addEventListener('DOMContentLoaded', () => {
             
             if (result.status === 'success') {
                 botMessageDiv.textContent = result.reply;
+                // Controlar el modo de input
+                toggleInputMode(result.requireInput);
             } else {
                 botMessageDiv.textContent = result.reply || 'Lo siento, no pude procesar tu mensaje. Intenta de nuevo.';
                 if (result.isMaintenance) {
@@ -111,9 +113,9 @@ document.addEventListener('DOMContentLoaded', () => {
                 }
             }
             
-            // Mostrar opciones rápidas si no estamos en mantenimiento
+            // Mostrar opciones rápidas dinámicas (o las por defecto)
             if (result.status === 'success') {
-                appendQuickActions();
+                appendQuickActions(result.options);
             }
             
         } catch (error) {
@@ -124,20 +126,52 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     }
 
+    // Controlar si el usuario puede escribir o no
+    function toggleInputMode(requireInput) {
+        const inputContainer = document.getElementById('chat-input-container');
+        if (requireInput === false) {
+            chatInput.disabled = true;
+            chatInput.placeholder = 'Selecciona una opción arriba...';
+            sendButton.disabled = true;
+            sendButton.classList.add('opacity-50');
+        } else {
+            chatInput.disabled = false;
+            chatInput.placeholder = 'Escribe tu mensaje...';
+            sendButton.disabled = false;
+            sendButton.classList.remove('opacity-50');
+            chatInput.focus();
+        }
+    }
+
     // Función para mostrar tarjetas de consulta rápida en el chat
-    function appendQuickActions() {
+    function appendQuickActions(dynamicOptions) {
         const actionsContainer = document.createElement('div');
         actionsContainer.className = 'quick-actions flex flex-wrap gap-2 mt-2';
         
-        const actions = [
-            { label: 'Pagar mi factura', message: 'Quiero pagar mi factura' },
-            { label: 'Soporte Técnico', message: 'Necesito soporte técnico' },
-            { label: 'Promesa de pago', message: 'Solicitar promesa de pago' }
-        ];
+        let actions = [];
+        
+        if (dynamicOptions && Array.isArray(dynamicOptions) && dynamicOptions.length > 0) {
+            // Convertir strings a objetos si n8n envía solo un array de textos
+            actions = dynamicOptions.map(opt => {
+                if (typeof opt === 'string') {
+                    return { label: opt, message: opt };
+                }
+                return opt;
+            });
+        } else if (!dynamicOptions) {
+            // Fallback: Menú principal por defecto si n8n no envía nada (o al abrir el chat)
+            actions = [
+                { label: 'Pagar mi factura', message: 'Quiero pagar mi factura' },
+                { label: 'Soporte Técnico', message: 'Necesito soporte técnico' },
+                { label: 'Promesa de pago', message: 'Solicitar promesa de pago' }
+            ];
+            // Asegurarse de que el input esté deshabilitado en el menú principal
+            toggleInputMode(false);
+        }
 
         actions.forEach(action => {
             const btn = document.createElement('button');
-            btn.className = 'bg-white border border-brand-lightblue text-brand-cobalt text-xs font-semibold py-1.5 px-3 rounded-full hover:bg-brand-lightblue hover:text-white transition-colors shadow-sm';
+            btn.className = 'bg-white border border-brand-lightblue/50 text-brand-cobalt text-xs font-semibold py-2 px-4 rounded-full hover:bg-gradient-to-r hover:from-brand-cobalt hover:to-brand-lightblue hover:text-white hover:border-transparent transition-all shadow-sm hover:shadow-md transform hover:-translate-y-0.5 animate-fade-in-up';
             btn.textContent = action.label;
             btn.addEventListener('click', () => {
                 chatInput.value = action.message;

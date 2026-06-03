@@ -66,16 +66,30 @@ app.post('/api/chat', async (req, res) => {
 
         const response = await axiosWithRetry(process.env.N8N_CHAT_WEBHOOK_URL, n8nPayload, headers);
 
-        let reply = response.data.output || response.data.response || response.data.message || response.data;
-        
-        if (!reply || (typeof reply === 'object' && Object.keys(reply).length === 0)) {
-            console.warn('[n8n Proxy] n8n devolvió una respuesta vacía.');
-            reply = "Entiendo. ¿Podrías darme más detalles sobre eso?";
+        let replyText = "Entiendo. ¿Podrías darme más detalles sobre eso?";
+        let options = null;
+        let requireInput = true;
+
+        if (response.data) {
+            // Si n8n envía un JSON completo con la nueva estructura
+            if (response.data.reply) {
+                replyText = response.data.reply;
+                options = response.data.options || null;
+                requireInput = response.data.requireInput !== undefined ? response.data.requireInput : true;
+            } 
+            // Fallback para estructura vieja (solo texto)
+            else if (response.data.output || response.data.response || response.data.message) {
+                replyText = response.data.output || response.data.response || response.data.message;
+            } else if (typeof response.data === 'string') {
+                replyText = response.data;
+            }
         }
 
         return res.json({
             status: 'success',
-            reply: typeof reply === 'string' ? reply : JSON.stringify(reply)
+            reply: replyText,
+            options: options,
+            requireInput: requireInput
         });
 
     } catch (error) {
