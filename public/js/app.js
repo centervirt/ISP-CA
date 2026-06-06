@@ -103,7 +103,31 @@ document.addEventListener('DOMContentLoaded', () => {
             const result = await response.json();
             
             if (result.status === 'success') {
-                botMessageDiv.textContent = result.reply;
+                // Soporte básico para negritas y saltos de línea
+                const formattedReply = result.reply
+                    .replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>')
+                    .replace(/\n/g, '<br>');
+                botMessageDiv.innerHTML = formattedReply;
+
+                // Si hay un link de pago, renderizar el botón de Mercado Pago
+                if (result.paymentUrl) {
+                    const mpContainer = document.createElement('div');
+                    mpContainer.className = 'mt-3';
+                    const mpButton = document.createElement('a');
+                    mpButton.href = result.paymentUrl;
+                    mpButton.target = '_blank';
+                    
+                    // Forzamos el color de fondo con CSS nativo para que nunca falle (independiente de Tailwind)
+                    mpButton.style.backgroundColor = '#009ee3';
+                    mpButton.style.color = '#ffffff';
+                    mpButton.style.display = 'block';
+                    
+                    mpButton.className = 'text-sm font-bold py-3 px-4 rounded-lg shadow-md hover:opacity-80 transition-opacity decoration-none w-full text-center';
+                    mpButton.innerHTML = '💳 Pagar con Mercado Pago';
+                    mpContainer.appendChild(mpButton);
+                    botMessageDiv.appendChild(mpContainer);
+                }
+
                 // Controlar el modo de input
                 toggleInputMode(result.requireInput);
             } else {
