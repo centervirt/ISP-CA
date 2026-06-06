@@ -15,7 +15,7 @@
 <body class="bg-white text-brand-navy font-sans antialiased transition-colors duration-300 overflow-x-hidden relative">
 
     <!-- Header / Navbar -->
-    <header class="fixed top-4 left-0 right-0 z-50 px-4 md:px-8">
+    <header class="absolute top-4 left-0 right-0 z-50 px-4 md:px-8">
         <div class="container mx-auto">
             <div class="bg-white/70 backdrop-blur-md shadow-lg rounded-2xl border border-white/40 px-6 py-4 flex flex-wrap justify-between items-center transition-all duration-300">
                 
@@ -23,20 +23,11 @@
                 <a href="#" class="flex flex-col items-start group relative z-10">
                     <div class="flex items-center">
                         <!-- Placeholder for actual logo image -->
-                        <div class="flex items-center text-brand-cobalt">
-                            <svg class="w-8 h-8 mr-2" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                                <path d="M5 12.55a11 11 0 0 1 14.08 0"></path>
-                                <path d="M1.42 9a16 16 0 0 1 21.16 0"></path>
-                                <path d="M8.53 16.11a6 6 0 0 1 6.95 0"></path>
-                                <circle cx="12" cy="20" r="1" fill="currentColor"></circle>
-                            </svg>
-                            <span class="text-2xl font-montserrat tracking-wide flex items-center">
-                                <span class="font-normal text-gray-700">CONEXIONES</span>
-                                <span class="font-bold text-brand-lightblue">ARGENTINAS</span>
-                            </span>
+                        <div class="flex items-center text-[#1a3b5c]">
+                            <!-- Logo Imagen con Drop Shadow para resaltar letras claras -->
+                            <img src="img/logo.png" alt="Conexiones Argentinas Internet" style="height: 120px; width: auto; max-width: 100%; filter: drop-shadow(0px 2px 4px rgba(0, 0, 0, 0.4));" class="object-contain transition-transform duration-300 hover:scale-105">
                         </div>
                     </div>
-                    <span class="text-[10px] text-gray-500 font-sans italic self-end uppercase tracking-widest mr-1">Internet inalámbrico</span>
                 </a>
 
                 <!-- Mobile menu button -->
@@ -54,7 +45,7 @@
                         <li><a href="#" class="block text-brand-navy hover:text-brand-cobalt transition-colors border-b-2 border-brand-cobalt pb-1">INICIO</a></li>
                         <li><a href="#planes" class="block text-brand-navy hover:text-brand-cobalt transition-colors pb-1">SERVICIOS</a></li>
                         <li><a href="#" class="block text-brand-navy hover:text-brand-cobalt transition-colors pb-1">COBERTURA</a></li>
-                        <li><a href="#contacto" class="block text-brand-navy hover:text-brand-cobalt transition-colors pb-1">SOPORTE</a></li>
+                        <li><a href="portal.html" class="block text-brand-navy hover:text-brand-cobalt transition-colors pb-1">PORTAL CLIENTE</a></li>
                         <li class="hidden">
                             <!-- Hidden link to keep chatbot trigger compatible if needed -->
                             <a href="#" id="nav-assistant-link">Asistente</a>
@@ -108,11 +99,7 @@
                     <div class="w-16 h-16 bg-brand-lightblue/10 rounded-2xl flex items-center justify-center mx-auto mb-6 text-brand-cobalt">
                         <svg class="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6"></path></svg>
                     </div>
-                    <h3 class="text-xl font-montserrat font-bold text-brand-navy mb-2">HOGAR (Básico)</h3>
-                    <div class="my-6">
-                        <span class="text-5xl font-light text-brand-cobalt">10</span>
-                        <span class="text-lg text-gray-400 font-semibold">Mbps</span>
-                    </div>
+                    <h3 class="text-xl font-montserrat font-bold text-brand-navy mb-4">HOGAR (Básico)</h3>
                     <p class="text-gray-500 mb-8 text-sm">Ideal para un uso ligero, navegación y redes sociales.</p>
                     <a href="#" class="block w-full py-3 rounded-full text-brand-cobalt font-semibold border border-brand-cobalt hover:bg-brand-cobalt hover:text-white transition-colors">Ver Detalles</a>
                 </div>
@@ -125,11 +112,7 @@
                     <div class="w-16 h-16 bg-brand-lightblue/10 rounded-2xl flex items-center justify-center mx-auto mb-6 text-brand-cobalt">
                         <svg class="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 13.255A23.931 23.931 0 0112 15c-3.183 0-6.22-.62-9-1.745M16 6V4a2 2 0 00-2-2h-4a2 2 0 00-2 2v2m4 6h.01M5 20h14a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"></path></svg>
                     </div>
-                    <h3 class="text-xl font-montserrat font-bold text-brand-navy mb-2">EMPRESAS (Premium)</h3>
-                    <div class="my-6">
-                        <span class="text-5xl font-light text-brand-cobalt">15</span>
-                        <span class="text-lg text-gray-400 font-semibold">Mbps</span>
-                    </div>
+                    <h3 class="text-xl font-montserrat font-bold text-brand-navy mb-4">EMPRESAS (Premium)</h3>
                     <p class="text-gray-500 mb-8 text-sm">Perfecto para hogares múltiples o pequeños negocios.</p>
                     <a href="#" class="block w-full py-3 rounded-full bg-brand-cobalt text-white font-semibold shadow-lg hover:bg-brand-navy transition-colors">Ver Detalles</a>
                 </div>
@@ -139,11 +122,7 @@
                     <div class="w-16 h-16 bg-brand-lightblue/10 rounded-2xl flex items-center justify-center mx-auto mb-6 text-brand-cobalt">
                         <svg class="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4"></path></svg>
                     </div>
-                    <h3 class="text-xl font-montserrat font-bold text-brand-navy mb-2">P. DIGITALES (Pro)</h3>
-                    <div class="my-6">
-                        <span class="text-5xl font-light text-brand-cobalt">20</span>
-                        <span class="text-lg text-gray-400 font-semibold">Mbps</span>
-                    </div>
+                    <h3 class="text-xl font-montserrat font-bold text-brand-navy mb-4">P. DIGITALES (Pro)</h3>
                     <p class="text-gray-500 mb-8 text-sm">Para usuarios exigentes, alto tráfico y teletrabajo.</p>
                     <a href="#" class="block w-full py-3 rounded-full text-brand-cobalt font-semibold border border-brand-cobalt hover:bg-brand-cobalt hover:text-white transition-colors">Ver Detalles</a>
                 </div>
@@ -162,7 +141,7 @@
                 <div>
                     <h3 class="text-lg font-montserrat font-semibold mb-4">Contacto</h3>
                     <p class="text-gray-400 text-sm mb-2 font-light">WhatsApp: 261 614-4088</p>
-                    <p class="text-gray-400 text-sm font-light">Email: info@conexionesargentinas.com</p>
+                    <p class="text-gray-400 text-sm font-light">Email: info@conexionesargentinas.ar</p>
                 </div>
                 <div>
                     <h3 class="text-lg font-montserrat font-semibold mb-4">Síguenos</h3>
@@ -172,8 +151,10 @@
                     </div>
                 </div>
             </div>
-            <div class="border-t border-gray-800 mt-12 pt-8 text-center text-gray-500 text-xs">
-                &copy; 2026 Conexiones Argentinas. Todos los derechos reservados.
+            <div class="border-t border-gray-800 mt-12 pt-8 text-center text-gray-500 text-xs flex flex-col md:flex-row items-center justify-center md:space-x-2 space-y-2 md:space-y-0">
+                <span>&copy; 2026 Conexiones Argentinas. Todos los derechos reservados.</span>
+                <span class="hidden md:inline">|</span>
+                <span>Desarrollado por <a href="https://neurasolutions.com.ar" target="_blank" class="text-brand-lightblue hover:text-white transition-colors font-semibold">Neura Solutions</a></span>
             </div>
         </div>
     </footer>

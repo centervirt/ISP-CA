@@ -3,6 +3,7 @@ const express = require('express');
 const path = require('path');
 const axios = require('axios');
 const { MercadoPagoConfig, Preference, Payment } = require('mercadopago');
+const jwt = require('jsonwebtoken');
 
 const app = express();
 const PORT = process.env.PORT || 3005;
@@ -441,7 +442,278 @@ app.post('/api/mercadopago/webhook', async (req, res) => {
     res.status(200).send('OK');
 });
 
-// Iniciar Servidor
+// ============================================
+// PORTAL CLIENTE NATIVO API
+// ============================================
+const JWT_SECRET = process.env.JWT_SECRET || 'super-secret-key-portal-ca';
+
+// Middleware de Autenticación
+const authMiddleware = (req, res, next) => {
+    const authHeader = req.headers.authorization;
+    if (!authHeader) return res.status(401).json({ error: 'No autorizado' });
+    
+    const token = authHeader.split(' ')[1];
+    if (!token) return res.status(401).json({ error: 'Formato de token inválido' });
+    
+    try {
+        const decoded = jwt.verify(token, JWT_SECRET);
+        req.user = decoded;
+        next();
+    } catch (err) {
+        return res.status(401).json({ error: 'Token inválido o expirado' });
+    }
+};
+
+// 1. LOGIN (Validar DNI y Email)
+app.post('/api/portal/login', async (req, res) => {
+    const { dni, email } = req.body;
+    if (!dni || !email) return res.status(400).json({ error: 'DNI y Email son requeridos' });
+
+    try {
+        const mwUrl = `${process.env.MIKROWISP_URL}/api/v1/GetClientsDetails`;
+        const payload = { token: process.env.MIKROWISP_API_TOKEN, cedula: dni };
+        
+        const mwResponse = await axios.post(mwUrl, payload, { headers: { 'Content-Type': 'application/json' } });
+        const data = mwResponse.data;
+
+        if (data && data.estado === 'exito' && data.datos && data.datos.length > 0) {
+            const cliente = data.datos[0];
+            const clienteEmail = (cliente.email || '').trim().toLowerCase();
+            const inputEmail = email.trim().toLowerCase();
+
+            // Validación flexible: Si en Mikrowisp no hay email registrado, 
+            // permitimos el ingreso solo con el DNI (asumiendo que el cliente está actualizando/proveyendo su email ahora).
+            if (!clienteEmail || clienteEmail === inputEmail) {
+                // Generar Token JWT
+                const token = jwt.sign({ 
+                    idcliente: cliente.id, 
+                    dni: cliente.cedula,
+                    nombre: cliente.nombre,
+                    email: cliente.email
+                }, JWT_SECRET, { expiresIn: '24h' });
+
+                return res.json({ 
+                    status: 'success', 
+                    token, 
+                    cliente: { 
+                        nombre: cliente.nombre, 
+                        email: cliente.email,
+                        direccion: cliente.direccion,
+                        estado: cliente.estado
+                    } 
+                });
+            } else {
+                return res.status(401).json({ error: 'El email no coincide con nuestros registros para este DNI.' });
+            }
+        }
+        return res.status(404).json({ error: 'No se encontró un cliente con ese DNI.' });
+    } catch (error) {
+        console.error('Error en portal login:', error.message);
+        res.status(500).json({ error: 'Error interno al validar credenciales.' });
+    }
+});
+
+// 2. DASHBOARD (Obtener datos y facturas)
+app.get('/api/portal/dashboard', authMiddleware, async (req, res) => {
+    const { dni, idcliente } = req.user;
+    try {
+        // Pedir detalles del cliente actualizados
+        const mwUrlClient = `${process.env.MIKROWISP_URL}/api/v1/GetClientsDetails`;
+        const payloadClient = { token: process.env.MIKROWISP_API_TOKEN, cedula: dni };
+        const clientResp = await axios.post(mwUrlClient, payloadClient, { headers: { 'Content-Type': 'application/json' } });
+        
+        let clienteDatos = null;
+        if (clientResp.data.estado === 'exito' && clientResp.data.datos.length > 0) {
+            clienteDatos = clientResp.data.datos[0];
+        }
+
+        // 1. Pedir facturas pendientes (estado: 1)
+        const mwUrlInv = `${process.env.MIKROWISP_URL}/api/v1/GetInvoices`;
+        const payloadInv = { token: process.env.MIKROWISP_API_TOKEN, idcliente: idcliente, estado: 1 };
+        const invResp = await axios.post(mwUrlInv, payloadInv, { headers: { 'Content-Type': 'application/json' } });
+        
+        let facturas = [];
+        let saldoTotal = 0;
+
+        if (invResp.data.estado === 'exito') {
+            let list = invResp.data.facturas || invResp.data.datos || [];
+            if (Array.isArray(list)) {
+                facturas = list;
+                saldoTotal = facturas.reduce((sum, fac) => sum + Number(fac.total || 0), 0);
+            }
+        }
+
+        // 2. Pedir facturas pagadas (estado: 2)
+        const payloadPaid = { token: process.env.MIKROWISP_API_TOKEN, idcliente: idcliente, estado: 2 };
+        const paidResp = await axios.post(mwUrlInv, payloadPaid, { headers: { 'Content-Type': 'application/json' } });
+        
+        let historial = [];
+        if (paidResp.data.estado === 'exito') {
+            let listPaid = paidResp.data.facturas || paidResp.data.datos || [];
+            if (Array.isArray(listPaid) && listPaid.length > 0) {
+                historial = listPaid;
+            }
+        }
+
+        res.json({
+            status: 'success',
+            perfil: clienteDatos,
+            finanzas: {
+                saldoPendiente: saldoTotal,
+                facturas: facturas,
+                historial: historial
+            }
+        });
+    } catch (error) {
+        console.error('Error obteniendo dashboard:', error.message);
+        res.status(500).json({ error: 'Error al obtener los datos del portal.' });
+    }
+});
+
+// 3. PAGAR DESDE EL PORTAL
+app.post('/api/portal/pagar', authMiddleware, async (req, res) => {
+    const { idfactura, monto } = req.body;
+    const { idcliente } = req.user;
+    if(!idfactura || !monto) return res.status(400).json({error: 'Datos de factura insuficientes'});
+
+    try {
+        const mpClient = new MercadoPagoConfig({ accessToken: process.env.MERCADOPAGO_ACCESS_TOKEN });
+        const preference = new Preference(mpClient);
+
+        const body = {
+            items: [
+                {
+                    id: `INV-${idfactura}`,
+                    title: `Factura ${idfactura} - Internet`,
+                    quantity: 1,
+                    unit_price: Number(monto),
+                    currency_id: 'ARS'
+                }
+            ],
+            external_reference: `${idfactura}|${monto}|${idcliente}`
+        };
+
+        if (process.env.BASE_URL) {
+            body.notification_url = `${process.env.BASE_URL}/api/mercadopago/webhook`;
+        }
+
+        const result = await preference.create({ body });
+        res.json({ status: 'success', paymentUrl: result.init_point });
+    } catch (err) {
+        console.error('Error MP Portal:', err.message);
+        res.status(500).json({ error: 'No se pudo conectar con Mercado Pago' });
+    }
+});
+
+
+// ============================================
+// CHATWOOT INTEGRACIÓN
+// ============================================
+
+async function iniciarConversacionChatwoot(telefono) {
+    if (!process.env.CHATWOOT_URL || !process.env.CHATWOOT_API_TOKEN) return;
+    
+    try {
+        const urlBase = `${process.env.CHATWOOT_URL}/api/v1/accounts/${process.env.CHATWOOT_ACCOUNT_ID}`;
+        const headers = { 'api_access_token': process.env.CHATWOOT_API_TOKEN, 'Content-Type': 'application/json' };
+
+        // 1. Buscar si el contacto ya existe
+        let contactId = null;
+        const searchRes = await axios.get(`${urlBase}/contacts/search?q=${telefono}`, { headers });
+        if (searchRes.data.payload && searchRes.data.payload.length > 0) {
+            contactId = searchRes.data.payload[0].id;
+        } else {
+            // Crear contacto
+            const createContactRes = await axios.post(`${urlBase}/contacts`, {
+                inbox_id: process.env.CHATWOOT_INBOX_ID,
+                name: `Cliente ${telefono}`,
+                phone_number: `+${telefono}`.replace('++', '+')
+            }, { headers });
+            contactId = createContactRes.data.payload.contact.id;
+        }
+
+        clientesEnSoporte[telefono].chatwootContactId = contactId;
+
+        // 2. Crear nueva conversación
+        const createConvRes = await axios.post(`${urlBase}/conversations`, {
+            source_id: contactId.toString(),
+            inbox_id: process.env.CHATWOOT_INBOX_ID,
+            contact_id: contactId
+        }, { headers });
+
+        const conversationId = createConvRes.data.id;
+        clientesEnSoporte[telefono].chatwootConversationId = conversationId;
+        
+        console.log(`[Chatwoot] Creada conv ${conversationId} para ${telefono}`);
+    } catch (e) {
+        console.error("[Chatwoot] Error al iniciar conversación:", e.response ? e.response.data : e.message);
+    }
+}
+
+async function enviarMensajeAChatwoot(telefono, mensajeTexto) {
+    if (!clientesEnSoporte[telefono] || !clientesEnSoporte[telefono].chatwootConversationId) return;
+    
+    try {
+        const convId = clientesEnSoporte[telefono].chatwootConversationId;
+        const urlBase = `${process.env.CHATWOOT_URL}/api/v1/accounts/${process.env.CHATWOOT_ACCOUNT_ID}`;
+        const headers = { 'api_access_token': process.env.CHATWOOT_API_TOKEN, 'Content-Type': 'application/json' };
+
+        await axios.post(`${urlBase}/conversations/${convId}/messages`, {
+            content: mensajeTexto,
+            message_type: "incoming"
+        }, { headers });
+        
+        console.log(`[Chatwoot] Mensaje enviado a conv ${convId}`);
+    } catch (e) {
+        console.error("[Chatwoot] Error al enviar mensaje:", e.response ? e.response.data : e.message);
+    }
+}
+
+// Webhook para recibir respuestas del Agente desde Chatwoot
+app.post('/api/chatwoot/webhook', async (req, res) => {
+    const body = req.body;
+    
+    // Solo nos importan los mensajes creados por un Agente (outgoing)
+    if (body.event === 'message_created' && body.message_type === 'outgoing') {
+        const contenido = body.content;
+        const contactId = body.conversation.contact_inbox.contact_id;
+        
+        // Buscar a qué número de WhatsApp corresponde este contacto
+        let telefonoDestino = null;
+        for (const num in clientesEnSoporte) {
+            if (clientesEnSoporte[num].chatwootContactId === contactId) {
+                telefonoDestino = num;
+                break;
+            }
+        }
+
+        if (telefonoDestino) {
+            console.log(`[Chatwoot] Agente responde a ${telefonoDestino}: ${contenido}`);
+            // ===============================================================
+            // IMPORTANTE: Como server.js no tiene control sobre whatsapp-web.js
+            // necesitamos enviar este mensaje hacia n8n o Evolution API para que
+            // se despache por WhatsApp. 
+            // Esto requerirá configurar N8N_SEND_MESSAGE_WEBHOOK_URL en .env
+            // ===============================================================
+            if (process.env.N8N_SEND_MESSAGE_WEBHOOK_URL) {
+                try {
+                    await axios.post(process.env.N8N_SEND_MESSAGE_WEBHOOK_URL, {
+                        to: telefonoDestino,
+                        message: contenido
+                    });
+                } catch(e) {
+                    console.error("[Chatwoot] Error enviando mensaje a WP via Webhook:", e.message);
+                }
+            } else {
+                console.log("ATENCIÓN: N8N_SEND_MESSAGE_WEBHOOK_URL no configurado. No se envió el mensaje a WP.");
+            }
+        }
+    }
+    
+    res.status(200).send('OK');
+});
+
+const PORT = process.env.PORT || 3005;
 app.listen(PORT, () => {
     console.log(`Servidor escuchando en http://localhost:${PORT}`);
 });
