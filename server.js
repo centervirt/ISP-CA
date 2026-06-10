@@ -11,31 +11,52 @@ const rateLimit = require('express-rate-limit');
 const app = express();
 const PORT = process.env.PORT || 3005;
 
-// Configuración de Seguridad
-app.use(helmet()); // Añade cabeceras de seguridad HTTP
-app.use(cors()); // Habilita CORS
-
-// Rate Limiting Global: máximo 100 peticiones por ventana de 15 minutos por IP
-const globalLimiter = rateLimit({
-    windowMs: 15 * 60 * 1000, 
-    max: 200, // Permitimos 200 para no afectar recursos estáticos tan rápido
-    message: { status: 'error', reply: 'Demasiadas peticiones al servidor. Por favor, intenta de nuevo más tarde.', options: [], requireInput: false }
-});
-app.use(globalLimiter);
-
-// Rate Limiting Específico para el chat (evita ataques de fuerza bruta al DNI)
-const chatLimiter = rateLimit({
-    windowMs: 60 * 1000, // 1 minuto
-    max: 20, // Máximo 20 mensajes de chat por minuto por IP
-    message: { status: 'error', reply: 'Has enviado demasiados mensajes seguidos. Por favor, espera un minuto.', options: [], requireInput: false }
-});
-
 // Configuración de reintentos para el bot
 const MAX_RETRIES = 2;
 const RETRY_DELAY = 1000;
 
+// ============================================================
+// MIDDLEWARES DE SEGURIDAD
+// ============================================================
+
+// 1. Helmet: configura cabeceras HTTP seguras automáticamente
+//    Previene XSS, Clickjacking, MIME sniffing, etc.
+app.use(helmet({
+    contentSecurityPolicy: false // Deshabilitado para no romper el CSS/JS externo (Google Fonts, Tailwind CDN, etc.)
+}));
+
+// 2. CORS: solo permite peticiones desde el mismo dominio
+const allowedOrigins = process.env.BASE_URL
+    ? [process.env.BASE_URL, 'http://localhost:3005']
+    : ['http://localhost:3005'];
+app.use(cors({
+    origin: allowedOrigins,
+    methods: ['GET', 'POST'],
+    allowedHeaders: ['Content-Type']
+}));
+
+// 3. Rate Limiting Global: máximo 150 peticiones por IP cada 15 minutos
+const generalLimiter = rateLimit({
+    windowMs: 15 * 60 * 1000, // 15 minutos
+    max: 150,
+    standardHeaders: true,
+    legacyHeaders: false,
+    message: { status: 'error', reply: 'Demasiadas peticiones. Por favor espera unos minutos e intenta de nuevo.' }
+});
+app.use(generalLimiter);
+
+// 4. Rate Limiting Estricto para el Chat: máximo 40 mensajes por IP cada 10 minutos
+const chatLimiter = rateLimit({
+    windowMs: 10 * 60 * 1000, // 10 minutos
+    max: 40,
+    standardHeaders: true,
+    legacyHeaders: false,
+    message: { status: 'error', reply: 'Has enviado demasiados mensajes. Por favor espera 10 minutos e intenta de nuevo.' }
+});
+
+// ============================================================
 // Middleware para parsear JSON en las peticiones
-app.use(express.json());
+app.use(express.json({ limit: '10kb' })); // Limitar tamaño de payload para evitar ataques
 
 // Servir archivos estáticos desde la carpeta 'public'
 app.use(express.static(path.join(__dirname, 'public')));
@@ -59,7 +80,7 @@ async function axiosWithRetry(url, payload, headers, retries = MAX_RETRIES) {
     }
 }
 
-// Endpoint de Chatbot (Proxy hacia n8n)
+// Endpoint de Chatbot (Proxy hacia n8n) — protegido con rate limiter estricto
 app.post('/api/chat', chatLimiter, async (req, res) => {
     const { message, sessionId } = req.body;
 
