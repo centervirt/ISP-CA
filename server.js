@@ -4,9 +4,31 @@ const path = require('path');
 const axios = require('axios');
 const { MercadoPagoConfig, Preference, Payment } = require('mercadopago');
 const jwt = require('jsonwebtoken');
+const helmet = require('helmet');
+const cors = require('cors');
+const rateLimit = require('express-rate-limit');
 
 const app = express();
 const PORT = process.env.PORT || 3005;
+
+// Configuración de Seguridad
+app.use(helmet()); // Añade cabeceras de seguridad HTTP
+app.use(cors()); // Habilita CORS
+
+// Rate Limiting Global: máximo 100 peticiones por ventana de 15 minutos por IP
+const globalLimiter = rateLimit({
+    windowMs: 15 * 60 * 1000, 
+    max: 200, // Permitimos 200 para no afectar recursos estáticos tan rápido
+    message: { status: 'error', reply: 'Demasiadas peticiones al servidor. Por favor, intenta de nuevo más tarde.', options: [], requireInput: false }
+});
+app.use(globalLimiter);
+
+// Rate Limiting Específico para el chat (evita ataques de fuerza bruta al DNI)
+const chatLimiter = rateLimit({
+    windowMs: 60 * 1000, // 1 minuto
+    max: 20, // Máximo 20 mensajes de chat por minuto por IP
+    message: { status: 'error', reply: 'Has enviado demasiados mensajes seguidos. Por favor, espera un minuto.', options: [], requireInput: false }
+});
 
 // Configuración de reintentos para el bot
 const MAX_RETRIES = 2;
@@ -38,7 +60,7 @@ async function axiosWithRetry(url, payload, headers, retries = MAX_RETRIES) {
 }
 
 // Endpoint de Chatbot (Proxy hacia n8n)
-app.post('/api/chat', async (req, res) => {
+app.post('/api/chat', chatLimiter, async (req, res) => {
     const { message, sessionId } = req.body;
 
     if (!message) {
@@ -67,6 +89,21 @@ app.post('/api/chat', async (req, res) => {
         });
     }
 
+    // 3. Verificamos si quiere SOPORTE TÉCNICO
+    if (message.trim().toLowerCase() === 'necesito soporte técnico' || message.trim().toLowerCase() === 'soporte') {
+        // Activar modo soporte para este cliente (silenciar bot)
+        if (from) {
+            clientesEnSoporte[from] = { timestamp: Date.now() };
+        }
+
+        return res.json({
+            status: 'success',
+            reply: '⏳ *Te estamos transfiriendo con un agente de soporte humano.* \n\nPor favor, aguarda un momento, un operador te responderá por este mismo medio.\n\n_(Si deseas cancelar y volver al menú principal en cualquier momento, escribe "salir de soporte")_',
+            options: [],
+            requireInput: true
+        });
+    }
+
     // 0.6. Verificamos si quiere VOLVER AL MENÚ
     if (message.trim().toLowerCase() === 'volver al menú' || message.trim().toLowerCase() === 'menú' || message.trim().toLowerCase() === 'menu') {
         return res.json({
@@ -76,6 +113,32 @@ app.post('/api/chat', async (req, res) => {
                 { label: "Salir", message: "Salir del chat" }
             ],
             requireInput: true
+        });
+    }
+
+    // 0.7. Verificamos si quiere VENCIMIENTOS
+    if (message.trim().toLowerCase() === 'vencimientos') {
+        return res.json({
+            status: 'success',
+            reply: 'Te informamos que **los vencimientos de tu factura son el día 20 de cada mes**.\n\n¿En qué más te puedo ayudar?',
+            options: [
+                { label: "Volver al menú", message: "Volver al menú" },
+                { label: "Salir", message: "Salir del chat" }
+            ],
+            requireInput: false
+        });
+    }
+
+    // 0.8. Verificamos si quiere FORMAS DE PAGO
+    if (message.trim().toLowerCase() === 'formas de pago') {
+        return res.json({
+            status: 'success',
+            reply: 'Aceptamos las siguientes formas de pago:\n\n- Pago con **Mercado Pago**\n- **Transferencia Bancaria**\n- **Contado Efectivo** en oficina\n\n¿Deseas realizar alguna otra gestión?',
+            options: [
+                { label: "Volver al menú", message: "Volver al menú" },
+                { label: "Salir", message: "Salir del chat" }
+            ],
+            requireInput: false
         });
     }
 
@@ -127,7 +190,8 @@ app.post('/api/chat', async (req, res) => {
                     reply: replyMensaje,
                     options: [
                         { label: "Pagar Factura", message: `PAGAR_FACTURA_DNI_${dniSaldo}` },
-                        { label: "Soporte Técnico", message: "Necesito soporte técnico" },
+                        { label: "Vencimientos", message: "Vencimientos" },
+                        { label: "Formas de pago", message: "Formas de pago" },
                         { label: "Volver al menú", message: "Volver al menú" }
                     ],
                     requireInput: false
@@ -155,7 +219,8 @@ app.post('/api/chat', async (req, res) => {
             options: [
                 { label: "Ver Saldo Pendiente", message: `VER_SALDO_DNI_${dniConfirmado}` },
                 { label: "Pagar Factura", message: `PAGAR_FACTURA_DNI_${dniConfirmado}` },
-                { label: "Soporte Técnico", message: "Necesito soporte técnico" }
+                { label: "Vencimientos", message: "Vencimientos" },
+                { label: "Formas de pago", message: "Formas de pago" }
             ],
             requireInput: false
         });
@@ -256,7 +321,7 @@ app.post('/api/chat', async (req, res) => {
         return res.json({
             status: 'error',
             reply: 'Hubo un error al conectar con la pasarela de pagos. Por favor intenta más tarde.',
-            options: ["Soporte Técnico", "Volver al menú"],
+            options: ["Volver al menú"],
             requireInput: false
         });
     }
@@ -273,7 +338,7 @@ app.post('/api/chat', async (req, res) => {
             return res.json({
                 status: 'error',
                 reply: 'El sistema no está configurado para buscar deudas. Por favor, configura las variables en el archivo .env',
-                options: ["Soporte Técnico"],
+                options: ["Volver al menú"],
                 requireInput: false
             });
         }
@@ -312,7 +377,7 @@ app.post('/api/chat', async (req, res) => {
                     status: 'success',
                     reply: `Lo siento, no encontré ningún cliente asociado al DNI **${dni}**. Verifica que esté bien escrito o que sea el titular.`,
                     options: [
-                        { label: "Soporte Técnico", message: "Necesito soporte técnico" },
+                        { label: "Volver al menú", message: "Volver al menú" },
                         { label: "Salir", message: "Salir del chat" }
                     ],
                     requireInput: true
@@ -323,7 +388,7 @@ app.post('/api/chat', async (req, res) => {
             return res.json({
                 status: 'error',
                 reply: 'Hubo una demora al conectar con el sistema de facturación. Intenta en unos minutos.',
-                options: ["Soporte Técnico", "Volver al menú"],
+                options: ["Volver al menú"],
                 requireInput: false
             });
         }
@@ -606,114 +671,7 @@ app.post('/api/portal/pagar', authMiddleware, async (req, res) => {
 });
 
 
-// ============================================
-// CHATWOOT INTEGRACIÓN
-// ============================================
-
-async function iniciarConversacionChatwoot(telefono) {
-    if (!process.env.CHATWOOT_URL || !process.env.CHATWOOT_API_TOKEN) return;
-    
-    try {
-        const urlBase = `${process.env.CHATWOOT_URL}/api/v1/accounts/${process.env.CHATWOOT_ACCOUNT_ID}`;
-        const headers = { 'api_access_token': process.env.CHATWOOT_API_TOKEN, 'Content-Type': 'application/json' };
-
-        // 1. Buscar si el contacto ya existe
-        let contactId = null;
-        const searchRes = await axios.get(`${urlBase}/contacts/search?q=${telefono}`, { headers });
-        if (searchRes.data.payload && searchRes.data.payload.length > 0) {
-            contactId = searchRes.data.payload[0].id;
-        } else {
-            // Crear contacto
-            const createContactRes = await axios.post(`${urlBase}/contacts`, {
-                inbox_id: process.env.CHATWOOT_INBOX_ID,
-                name: `Cliente ${telefono}`,
-                phone_number: `+${telefono}`.replace('++', '+')
-            }, { headers });
-            contactId = createContactRes.data.payload.contact.id;
-        }
-
-        clientesEnSoporte[telefono].chatwootContactId = contactId;
-
-        // 2. Crear nueva conversación
-        const createConvRes = await axios.post(`${urlBase}/conversations`, {
-            source_id: contactId.toString(),
-            inbox_id: process.env.CHATWOOT_INBOX_ID,
-            contact_id: contactId
-        }, { headers });
-
-        const conversationId = createConvRes.data.id;
-        clientesEnSoporte[telefono].chatwootConversationId = conversationId;
-        
-        console.log(`[Chatwoot] Creada conv ${conversationId} para ${telefono}`);
-    } catch (e) {
-        console.error("[Chatwoot] Error al iniciar conversación:", e.response ? e.response.data : e.message);
-    }
-}
-
-async function enviarMensajeAChatwoot(telefono, mensajeTexto) {
-    if (!clientesEnSoporte[telefono] || !clientesEnSoporte[telefono].chatwootConversationId) return;
-    
-    try {
-        const convId = clientesEnSoporte[telefono].chatwootConversationId;
-        const urlBase = `${process.env.CHATWOOT_URL}/api/v1/accounts/${process.env.CHATWOOT_ACCOUNT_ID}`;
-        const headers = { 'api_access_token': process.env.CHATWOOT_API_TOKEN, 'Content-Type': 'application/json' };
-
-        await axios.post(`${urlBase}/conversations/${convId}/messages`, {
-            content: mensajeTexto,
-            message_type: "incoming"
-        }, { headers });
-        
-        console.log(`[Chatwoot] Mensaje enviado a conv ${convId}`);
-    } catch (e) {
-        console.error("[Chatwoot] Error al enviar mensaje:", e.response ? e.response.data : e.message);
-    }
-}
-
-// Webhook para recibir respuestas del Agente desde Chatwoot
-app.post('/api/chatwoot/webhook', async (req, res) => {
-    const body = req.body;
-    
-    // Solo nos importan los mensajes creados por un Agente (outgoing)
-    if (body.event === 'message_created' && body.message_type === 'outgoing') {
-        const contenido = body.content;
-        const contactId = body.conversation.contact_inbox.contact_id;
-        
-        // Buscar a qué número de WhatsApp corresponde este contacto
-        let telefonoDestino = null;
-        for (const num in clientesEnSoporte) {
-            if (clientesEnSoporte[num].chatwootContactId === contactId) {
-                telefonoDestino = num;
-                break;
-            }
-        }
-
-        if (telefonoDestino) {
-            console.log(`[Chatwoot] Agente responde a ${telefonoDestino}: ${contenido}`);
-            // ===============================================================
-            // IMPORTANTE: Como server.js no tiene control sobre whatsapp-web.js
-            // necesitamos enviar este mensaje hacia n8n o Evolution API para que
-            // se despache por WhatsApp. 
-            // Esto requerirá configurar N8N_SEND_MESSAGE_WEBHOOK_URL en .env
-            // ===============================================================
-            if (process.env.N8N_SEND_MESSAGE_WEBHOOK_URL) {
-                try {
-                    await axios.post(process.env.N8N_SEND_MESSAGE_WEBHOOK_URL, {
-                        to: telefonoDestino,
-                        message: contenido
-                    });
-                } catch(e) {
-                    console.error("[Chatwoot] Error enviando mensaje a WP via Webhook:", e.message);
-                }
-            } else {
-                console.log("ATENCIÓN: N8N_SEND_MESSAGE_WEBHOOK_URL no configurado. No se envió el mensaje a WP.");
-            }
-        }
-    }
-    
-    res.status(200).send('OK');
-});
-
-const PORT = process.env.PORT || 3005;
+// Iniciar el servidor
 app.listen(PORT, () => {
     console.log(`Servidor escuchando en http://localhost:${PORT}`);
 });

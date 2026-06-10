@@ -17,15 +17,28 @@
     <!-- Header / Navbar -->
     <header class="absolute top-4 left-0 right-0 z-50 px-4 md:px-8">
         <div class="container mx-auto">
-            <div class="bg-white/70 backdrop-blur-md shadow-lg rounded-2xl border border-white/40 px-6 py-4 flex flex-wrap justify-between items-center transition-all duration-300">
+            <div class="bg-white/70 backdrop-blur-md shadow-lg rounded-2xl border border-white/40 px-4 md:px-6 py-3 md:py-4 flex justify-between items-center transition-all duration-300 w-full">
                 
                 <!-- Logo Area -->
-                <a href="#" class="flex flex-col items-start group relative z-10">
-                    <div class="flex items-center">
-                        <!-- Placeholder for actual logo image -->
-                        <div class="flex items-center text-[#1a3b5c]">
-                            <!-- Logo Imagen con Drop Shadow para resaltar letras claras -->
-                            <img src="img/logo.png" alt="Conexiones Argentinas Internet" style="height: 120px; width: auto; max-width: 100%; filter: drop-shadow(0px 2px 4px rgba(0, 0, 0, 0.4));" class="object-contain transition-transform duration-300 hover:scale-105">
+                <a href="#" class="flex flex-col items-start group relative z-10 flex-shrink-0">
+                    <div class="flex items-center gap-1.5 md:gap-3 transition-transform duration-300 hover:scale-105">
+                        <!-- Icono Wi-Fi -->
+                        <div class="text-brand-navy">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" class="md:w-[42px] md:h-[42px]">
+                                <path d="M5 12.55a11 11 0 0 1 14.08 0"></path>
+                                <path d="M1.42 9a16 16 0 0 1 21.16 0"></path>
+                                <path d="M8.53 16.11a6 6 0 0 1 6.95 0"></path>
+                                <circle cx="12" cy="20" r="1.5" fill="currentColor"></circle>
+                            </svg>
+                        </div>
+                        <!-- Texto del Logo -->
+                        <div class="flex flex-col mt-1">
+                            <div class="text-base sm:text-xl md:text-[28px] font-montserrat tracking-tight leading-none">
+                                <span class="text-gray-600 font-normal">CONEXIONES</span><span class="text-[#56a3d6] font-extrabold">ARGENTINAS</span>
+                            </div>
+                            <div class="text-[8px] sm:text-[9px] md:text-[11px] text-gray-500 italic font-semibold tracking-[0.25em] text-right mt-0.5 md:mt-1 pr-1">
+                                INTERNET
+                            </div>
                         </div>
                     </div>
                 </a>
@@ -44,7 +57,7 @@
                     <ul class="flex flex-col md:flex-row md:space-x-8 space-y-4 md:space-y-0 text-center md:text-left mt-4 md:mt-0">
                         <li><a href="#" class="block text-brand-navy hover:text-brand-cobalt transition-colors border-b-2 border-brand-cobalt pb-1">INICIO</a></li>
                         <li><a href="#planes" class="block text-brand-navy hover:text-brand-cobalt transition-colors pb-1">SERVICIOS</a></li>
-                        <li><a href="#" class="block text-brand-navy hover:text-brand-cobalt transition-colors pb-1">COBERTURA</a></li>
+                        <li><a href="#cobertura" class="block text-brand-navy hover:text-brand-cobalt transition-colors pb-1">COBERTURA</a></li>
                         <li><a href="portal.html" class="block text-brand-navy hover:text-brand-cobalt transition-colors pb-1">PORTAL CLIENTE</a></li>
                         <li class="hidden">
                             <!-- Hidden link to keep chatbot trigger compatible if needed -->
@@ -93,39 +106,173 @@
         <div class="container mx-auto px-6 text-center">
             <h2 class="text-3xl font-montserrat font-bold text-brand-navy mb-16 tracking-wide">SERVICIOS Y PLANES</h2>
             
-            <div class="grid grid-cols-1 md:grid-cols-3 gap-10 max-w-5xl mx-auto">
+            <!-- Grid de Planes de Internet (4 columnas) -->
+            <div class="grid grid-cols-1 md:grid-cols-4 gap-4 lg:gap-8 max-w-[100%] xl:max-w-7xl mx-auto mb-16 px-2">
                 <!-- Plan Básico -->
-                <div class="bg-white p-6 md:p-10 rounded-3xl shadow-[0_10px_40px_-10px_rgba(0,0,0,0.05)] border border-gray-100 hover:shadow-[0_20px_50px_-10px_rgba(10,75,143,0.1)] hover:-translate-y-2 transition-all duration-300">
-                    <div class="w-16 h-16 bg-brand-lightblue/10 rounded-2xl flex items-center justify-center mx-auto mb-6 text-brand-cobalt">
-                        <svg class="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6"></path></svg>
+                <div class="bg-white p-5 lg:p-8 rounded-3xl shadow-[0_10px_40px_-10px_rgba(0,0,0,0.05)] border border-gray-100 hover:shadow-[0_20px_50px_-10px_rgba(10,75,143,0.1)] hover:-translate-y-2 transition-all duration-300 flex flex-col h-full">
+                    <div class="w-14 h-14 bg-brand-lightblue/10 rounded-2xl flex items-center justify-center mx-auto mb-4 text-brand-cobalt">
+                        <svg class="w-7 h-7" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6"></path></svg>
                     </div>
-                    <h3 class="text-xl font-montserrat font-bold text-brand-navy mb-4">HOGAR (Básico)</h3>
-                    <p class="text-gray-500 mb-8 text-sm">Ideal para un uso ligero, navegación y redes sociales.</p>
-                    <a href="#" class="block w-full py-3 rounded-full text-brand-cobalt font-semibold border border-brand-cobalt hover:bg-brand-cobalt hover:text-white transition-colors">Ver Detalles</a>
+                    <h3 class="text-lg lg:text-xl font-montserrat font-bold text-brand-navy mb-3">PLAN BÁSICO</h3>
+                    <p class="text-gray-500 mb-6 text-xs lg:text-sm flex-grow">Ideal para un uso ligero, navegación general y redes sociales en el hogar.</p>
+                    <a href="#contacto" class="mt-auto block w-full py-3 rounded-full text-brand-cobalt font-semibold border border-brand-cobalt hover:bg-brand-cobalt hover:text-white transition-colors">Consultar</a>
                 </div>
 
                 <!-- Plan Premium -->
-                <div class="bg-white p-6 md:p-10 rounded-3xl shadow-[0_10px_40px_-10px_rgba(10,75,143,0.15)] border-2 border-brand-lightblue relative hover:-translate-y-2 transition-all duration-300 transform md:scale-105">
-                    <div class="absolute -top-4 left-1/2 transform -translate-x-1/2 bg-gradient-to-r from-brand-cobalt to-brand-lightblue text-white text-xs font-bold py-1 px-4 rounded-full">
+                <div class="bg-white p-5 lg:p-8 rounded-3xl shadow-[0_10px_40px_-10px_rgba(10,75,143,0.15)] border-2 border-brand-lightblue relative hover:-translate-y-2 transition-all duration-300 transform md:-translate-y-2 md:scale-[1.02] flex flex-col h-full">
+                    <div class="absolute -top-3 left-1/2 transform -translate-x-1/2 bg-gradient-to-r from-brand-cobalt to-brand-lightblue text-white text-[10px] lg:text-xs font-bold py-1 px-3 lg:px-4 rounded-full whitespace-nowrap">
                         MÁS ELEGIDO
                     </div>
-                    <div class="w-16 h-16 bg-brand-lightblue/10 rounded-2xl flex items-center justify-center mx-auto mb-6 text-brand-cobalt">
-                        <svg class="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 13.255A23.931 23.931 0 0112 15c-3.183 0-6.22-.62-9-1.745M16 6V4a2 2 0 00-2-2h-4a2 2 0 00-2 2v2m4 6h.01M5 20h14a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"></path></svg>
+                    <div class="w-14 h-14 bg-brand-lightblue/10 rounded-2xl flex items-center justify-center mx-auto mb-4 text-brand-cobalt">
+                        <svg class="w-7 h-7" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 13.255A23.931 23.931 0 0112 15c-3.183 0-6.22-.62-9-1.745M16 6V4a2 2 0 00-2-2h-4a2 2 0 00-2 2v2m4 6h.01M5 20h14a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"></path></svg>
                     </div>
-                    <h3 class="text-xl font-montserrat font-bold text-brand-navy mb-4">EMPRESAS (Premium)</h3>
-                    <p class="text-gray-500 mb-8 text-sm">Perfecto para hogares múltiples o pequeños negocios.</p>
-                    <a href="#" class="block w-full py-3 rounded-full bg-brand-cobalt text-white font-semibold shadow-lg hover:bg-brand-navy transition-colors">Ver Detalles</a>
+                    <h3 class="text-lg lg:text-xl font-montserrat font-bold text-brand-navy mb-3">PLAN PREMIUM</h3>
+                    <p class="text-gray-500 mb-6 text-xs lg:text-sm flex-grow">Perfecto para familias, múltiples dispositivos y streaming en alta calidad.</p>
+                    <a href="#contacto" class="mt-auto block w-full py-3 rounded-full bg-brand-cobalt text-white font-semibold shadow-lg hover:bg-brand-navy transition-colors">Consultar</a>
                 </div>
 
-                <!-- Plan Pro -->
-                <div class="bg-white p-6 md:p-10 rounded-3xl shadow-[0_10px_40px_-10px_rgba(0,0,0,0.05)] border border-gray-100 hover:shadow-[0_20px_50px_-10px_rgba(10,75,143,0.1)] hover:-translate-y-2 transition-all duration-300">
-                    <div class="w-16 h-16 bg-brand-lightblue/10 rounded-2xl flex items-center justify-center mx-auto mb-6 text-brand-cobalt">
-                        <svg class="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4"></path></svg>
+                <!-- Plan MIMO -->
+                <div class="bg-white p-5 lg:p-8 rounded-3xl shadow-[0_10px_40px_-10px_rgba(0,0,0,0.05)] border border-gray-100 hover:shadow-[0_20px_50px_-10px_rgba(10,75,143,0.1)] hover:-translate-y-2 transition-all duration-300 flex flex-col h-full">
+                    <div class="w-14 h-14 bg-brand-lightblue/10 rounded-2xl flex items-center justify-center mx-auto mb-4 text-brand-cobalt">
+                        <svg class="w-7 h-7" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"></path></svg>
                     </div>
-                    <h3 class="text-xl font-montserrat font-bold text-brand-navy mb-4">P. DIGITALES (Pro)</h3>
-                    <p class="text-gray-500 mb-8 text-sm">Para usuarios exigentes, alto tráfico y teletrabajo.</p>
-                    <a href="#" class="block w-full py-3 rounded-full text-brand-cobalt font-semibold border border-brand-cobalt hover:bg-brand-cobalt hover:text-white transition-colors">Ver Detalles</a>
+                    <h3 class="text-lg lg:text-xl font-montserrat font-bold text-brand-navy mb-3">MIMO 50 MB</h3>
+                    <p class="text-gray-500 mb-6 text-xs lg:text-sm flex-grow">Alta velocidad inalámbrica para gamers y trabajo remoto intensivo.</p>
+                    <a href="#contacto" class="mt-auto block w-full py-3 rounded-full text-brand-cobalt font-semibold border border-brand-cobalt hover:bg-brand-cobalt hover:text-white transition-colors">Consultar</a>
                 </div>
+
+                <!-- Plan FTTC Fiber -->
+                <div class="bg-white p-5 lg:p-8 rounded-3xl shadow-[0_10px_40px_-10px_rgba(0,0,0,0.05)] border border-gray-100 hover:shadow-[0_20px_50px_-10px_rgba(10,75,143,0.1)] hover:-translate-y-2 transition-all duration-300 flex flex-col h-full">
+                    <div class="w-14 h-14 bg-brand-lightblue/10 rounded-2xl flex items-center justify-center mx-auto mb-4 text-brand-cobalt">
+                        <svg class="w-7 h-7" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4"></path></svg>
+                    </div>
+                    <h3 class="text-lg lg:text-xl font-montserrat font-bold text-brand-navy mb-3">FTTC FIBER</h3>
+                    <p class="text-gray-500 mb-6 text-xs lg:text-sm flex-grow">La máxima estabilidad y capacidad de la fibra hasta el gabinete.</p>
+                    <a href="#contacto" class="mt-auto block w-full py-3 rounded-full text-brand-cobalt font-semibold border border-brand-cobalt hover:bg-brand-cobalt hover:text-white transition-colors">Consultar</a>
+                </div>
+            </div>
+
+            <!-- Servicios Adicionales -->
+            <h3 class="text-2xl font-montserrat font-semibold text-brand-navy mb-10 mt-16">Nuestros Servicios Adicionales</h3>
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-6 max-w-5xl mx-auto">
+                <!-- Soporte -->
+                <div class="bg-brand-cobalt text-white p-6 rounded-2xl shadow-md flex items-center gap-4 hover:bg-brand-navy transition-colors">
+                    <div class="bg-white/20 p-3 rounded-full">
+                        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M18.364 5.636l-3.536 3.536m0 5.656l3.536 3.536M9.172 9.172L5.636 5.636m3.536 9.192l-3.536 3.536M21 12a9 9 0 11-18 0 9 9 0 0118 0zm-5 0a4 4 0 11-8 0 4 4 0 018 0z"></path></svg>
+                    </div>
+                    <div class="text-left">
+                        <h4 class="font-bold">Soporte Técnico</h4>
+                        <p class="text-sm text-brand-lightblue">Sin costo adicional</p>
+                    </div>
+                </div>
+
+                <!-- Cámaras IP -->
+                <div class="bg-white border border-gray-200 p-6 rounded-2xl shadow-sm flex items-center gap-4 hover:shadow-md transition-shadow">
+                    <div class="bg-brand-lightblue/10 text-brand-cobalt p-3 rounded-full">
+                        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 10l4.553-2.276A1 1 0 0121 8.618v6.764a1 1 0 01-1.447.894L15 14M5 18h8a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v8a2 2 0 002 2z"></path></svg>
+                    </div>
+                    <div class="text-left">
+                        <h4 class="font-bold text-brand-navy">Cámaras IP</h4>
+                        <p class="text-sm text-gray-500">Seguridad conectada</p>
+                    </div>
+                </div>
+
+                <!-- TV Full -->
+                <div class="bg-gradient-to-r from-purple-600 to-brand-cobalt text-white p-6 rounded-2xl shadow-md flex items-center gap-4 relative overflow-hidden group">
+                    <!-- Efecto brillo -->
+                    <div class="absolute inset-0 w-1/4 h-full bg-white/20 skew-x-12 -translate-x-full group-hover:animate-[shimmer_1.5s_infinite]"></div>
+                    <div class="bg-white/20 p-3 rounded-full relative z-10">
+                        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9.75 17L9 20l-1 1h8l-1-1-.75-3M3 13h18M5 17h14a2 2 0 002-2V5a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"></path></svg>
+                    </div>
+                    <div class="text-left relative z-10">
+                        <h4 class="font-bold">TV FULL</h4>
+                        <p class="text-sm text-purple-200">¡Muy Pronto!</p>
+                    </div>
+                </div>
+            </div>
+            
+        </div>
+    </section>  </section>
+    <!-- Sección de Cobertura -->
+    <section id="cobertura" class="py-20 bg-gray-50 relative overflow-hidden">
+        <!-- Decoración de fondo -->
+        <div class="absolute top-0 right-0 w-64 h-64 bg-brand-lightblue/10 rounded-full blur-3xl -translate-y-1/2 translate-x-1/3"></div>
+        <div class="absolute bottom-0 left-0 w-80 h-80 bg-brand-cobalt/5 rounded-full blur-3xl translate-y-1/3 -translate-x-1/4"></div>
+        
+        <div class="container mx-auto px-6 relative z-10">
+            <div class="text-center mb-16">
+                <h2 class="text-3xl md:text-4xl font-montserrat font-bold text-brand-navy mb-4">Nuestra Zona de Cobertura</h2>
+                <p class="text-gray-500 max-w-2xl mx-auto">Llevamos conexión estable y de alta velocidad a múltiples zonas de la región. Revisa si te encuentras dentro de nuestra red.</p>
+            </div>
+
+            <!-- Accordion para Mapas -->
+            <details class="group">
+                <summary class="list-none flex justify-center items-center gap-2 bg-white border border-brand-lightblue/30 text-brand-cobalt font-semibold py-3 px-8 rounded-full shadow-sm hover:shadow-md hover:bg-brand-lightblue/5 transition-all outline-none select-none cursor-pointer max-w-md mx-auto mb-8">
+                    <span>Ver mapas de cobertura detallados</span>
+                    <svg class="w-5 h-5 transition-transform duration-300 group-open:rotate-180" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path></svg>
+                </summary>
+
+                <!-- Contenido Desplegable (Grid de Mapas) -->
+                <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 origin-top animate-fade-in-up mt-4">
+                    
+                    <!-- Zona 1 -->
+                    <div class="bg-white rounded-3xl overflow-hidden shadow-[0_10px_30px_-10px_rgba(10,75,143,0.15)] group/card hover:-translate-y-2 transition-all duration-300 border border-gray-100">
+                        <div class="relative h-48 overflow-hidden">
+                            <!-- Reemplazar con la imagen real -->
+                            <img src="/img/mapa1.jpg" alt="Cobertura Zona 1" class="w-full h-full object-cover group-hover/card:scale-110 transition-transform duration-700">
+                            <!-- Overlay decorativo -->
+                            <div class="absolute inset-0 bg-gradient-to-t from-brand-navy/80 to-transparent"></div>
+                            <h3 class="absolute bottom-4 left-4 text-white font-montserrat font-bold text-lg">Zona San Martín</h3>
+                        </div>
+                        <div class="p-5">
+                            <p class="text-sm text-gray-500">Cobertura total en el centro y alrededores, incluyendo el Polideportivo Municipal.</p>
+                        </div>
+                    </div>
+
+                    <!-- Zona 2 -->
+                    <div class="bg-white rounded-3xl overflow-hidden shadow-[0_10px_30px_-10px_rgba(10,75,143,0.15)] group/card hover:-translate-y-2 transition-all duration-300 border border-gray-100">
+                        <div class="relative h-48 overflow-hidden">
+                            <img src="/img/mapa2.jpg" alt="Cobertura Zona 2" class="w-full h-full object-cover group-hover/card:scale-110 transition-transform duration-700">
+                            <div class="absolute inset-0 bg-gradient-to-t from-brand-navy/80 to-transparent"></div>
+                            <h3 class="absolute bottom-4 left-4 text-white font-montserrat font-bold text-lg">La Colonia / Junín</h3>
+                        </div>
+                        <div class="p-5">
+                            <p class="text-sm text-gray-500">Llegamos a todo el sector agroindustrial y fincas aledañas.</p>
+                        </div>
+                    </div>
+
+                    <!-- Zona 3 -->
+                    <div class="bg-white rounded-3xl overflow-hidden shadow-[0_10px_30px_-10px_rgba(10,75,143,0.15)] group/card hover:-translate-y-2 transition-all duration-300 border border-gray-100">
+                        <div class="relative h-48 overflow-hidden">
+                            <img src="/img/mapa3.jpg" alt="Cobertura Zona 3" class="w-full h-full object-cover group-hover/card:scale-110 transition-transform duration-700">
+                            <div class="absolute inset-0 bg-gradient-to-t from-brand-navy/80 to-transparent"></div>
+                            <h3 class="absolute bottom-4 left-4 text-white font-montserrat font-bold text-lg">Buen Orden</h3>
+                        </div>
+                        <div class="p-5">
+                            <p class="text-sm text-gray-500">Servicio estable en el Carril Norte y desarrollos urbanos de la zona.</p>
+                        </div>
+                    </div>
+
+                    <!-- Zona 4 -->
+                    <div class="bg-white rounded-3xl overflow-hidden shadow-[0_10px_30px_-10px_rgba(10,75,143,0.15)] group/card hover:-translate-y-2 transition-all duration-300 border border-gray-100">
+                        <div class="relative h-48 overflow-hidden">
+                            <img src="/img/mapa4.jpg" alt="Cobertura Zona 4" class="w-full h-full object-cover group-hover/card:scale-110 transition-transform duration-700">
+                            <div class="absolute inset-0 bg-gradient-to-t from-brand-navy/80 to-transparent"></div>
+                            <h3 class="absolute bottom-4 left-4 text-white font-montserrat font-bold text-lg">Montecaseros</h3>
+                        </div>
+                        <div class="p-5">
+                            <p class="text-sm text-gray-500">Conexión de alta gama para la región del Club Social y Deportivo.</p>
+                        </div>
+                    </div>
+
+                </div>
+            </details>
+            
+            <div class="mt-12 text-center">
+                <a href="#contacto" class="inline-flex items-center gap-2 text-brand-cobalt font-semibold hover:text-brand-lightblue transition-colors">
+                    ¿Tu zona no aparece? Consúltanos por WhatsApp
+                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14 5l7 7m0 0l-7 7m7-7H3"></path></svg>
+                </a>
             </div>
         </div>
     </section>
@@ -135,12 +282,17 @@
         <div class="container mx-auto px-6 text-center md:text-left">
             <div class="grid grid-cols-1 md:grid-cols-3 gap-12">
                 <div>
-                    <h3 class="text-xl font-montserrat font-bold mb-4 text-brand-lightblue">CONEXIONES ARGENTINAS</h3>
-                    <p class="text-gray-400 text-sm font-light leading-relaxed">Proveyendo internet estable y de alta gama en toda la región.</p>
+                    <h3 class="text-xl font-montserrat font-bold mb-4 text-brand-lightblue">CONEXIONES ARGENTINAS INTERNET</h3>
+                    <p class="text-gray-400 text-sm font-light leading-relaxed">Desde el 2011 ofreciendo servicio y líder en servicio inalámbrico.</p>
                 </div>
                 <div>
                     <h3 class="text-lg font-montserrat font-semibold mb-4">Contacto</h3>
-                    <p class="text-gray-400 text-sm mb-2 font-light">WhatsApp: 261 614-4088</p>
+                    <p class="text-gray-400 text-sm mb-2 font-light">
+                        <a href="https://wa.me/5492616144088?text=Hola%2C%20necesito%20soporte%20t%C3%A9cnico" target="_blank" class="hover:text-green-400 transition-colors flex items-center justify-center md:justify-start gap-2">
+                            <svg class="w-5 h-5 text-green-500" fill="currentColor" viewBox="0 0 24 24"><path d="M12.031 0C5.385 0 0 5.385 0 12.031c0 2.12.551 4.181 1.594 6L.073 24l6.115-1.545A11.968 11.968 0 0012.03 24c6.646 0 12.032-5.385 12.032-12.03S18.677 0 12.031 0zm0 22.016a9.953 9.953 0 01-5.074-1.381l-.364-.216-3.766.953.992-3.665-.237-.376a9.948 9.948 0 01-1.523-5.295C2.058 5.433 7.433.058 12.03.058s9.973 5.375 9.973 9.972-5.376 9.972-9.972 9.972v-.004zm5.454-7.447c-.299-.15-1.77-8.73-2.046-9.74-.276-1.01-1.317-.674-1.848-.485-.53.188-1.54 1.558-1.719 1.792-.18.234-.36.262-.659.112-2.195-1.096-3.844-3.14-4.298-3.924-.131-.226-.013-.347.137-.496.135-.134.299-.348.448-.523.149-.174.2-.299.299-.498.099-.199.05-.374-.025-.523-.075-.15-.659-1.593-.902-2.18-.237-.573-.478-.495-.658-.504-.175-.008-.374-.008-.574-.008s-.524.075-.798.374c-.274.299-1.046 1.021-1.046 2.492s1.07 2.89 1.22 3.09C5.586 11.83 8.163 15.65 11.66 17.15c1.921.826 2.68.805 3.513.682.946-.141 2.92-1.194 3.328-2.348.41-1.154.41-2.14.288-2.348-.122-.208-.471-.332-.77-.482z"/></svg>
+                            WhatsApp: 261 614-4088 (Soporte)
+                        </a>
+                    </p>
                     <p class="text-gray-400 text-sm font-light">Email: info@conexionesargentinas.ar</p>
                 </div>
                 <div>
@@ -197,12 +349,9 @@
                 ¡Bienvenido! Soy el asistente virtual de Conexiones Argentinas. 🌐
             </div>
             <div class="message bot self-start bg-white border border-gray-100 text-gray-700 p-4 rounded-2xl rounded-tl-sm text-sm font-sans max-w-[85%] shadow-sm relative animate-fade-in-up" style="animation-delay: 0.2s; animation-fill-mode: both;">
-                Para reportar caída del servicio o lentitud en tu conexión escribí la palabra: <strong>Soporte</strong>.
-            </div>
-            <div class="message bot self-start bg-white border border-gray-100 text-gray-700 p-4 rounded-2xl rounded-tl-sm text-sm font-sans max-w-[85%] shadow-sm relative animate-fade-in-up" style="animation-delay: 0.4s; animation-fill-mode: both;">
                 Para consultar deudas o realizar trámites administrativos ingresá el número de <strong>DNI</strong> del titular del servicio.
             </div>
-            <div class="message bot self-start bg-white border border-gray-100 text-gray-700 p-4 rounded-2xl rounded-tl-sm text-sm font-sans max-w-[85%] shadow-sm relative animate-fade-in-up" style="animation-delay: 0.6s; animation-fill-mode: both;">
+            <div class="message bot self-start bg-white border border-gray-100 text-gray-700 p-4 rounded-2xl rounded-tl-sm text-sm font-sans max-w-[85%] shadow-sm relative animate-fade-in-up" style="animation-delay: 0.4s; animation-fill-mode: both;">
                 Escribí los números sin puntos ni espacios de tu DNI:
             </div>
         </div>

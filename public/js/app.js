@@ -185,17 +185,23 @@ document.addEventListener('DOMContentLoaded', () => {
         } else if (!dynamicOptions) {
             // Fallback: Menú principal por defecto si n8n no envía nada (o al abrir el chat)
             actions = [
-                { label: 'Pagar mi factura', message: 'Quiero pagar mi factura' },
-                { label: 'Soporte Técnico', message: 'Necesito soporte técnico' },
+                { label: 'Formas de pago', message: 'Formas de pago' },
+                { label: 'Vencimientos', message: 'Vencimientos' },
+                { label: 'Registro Mi cuenta', message: 'Registro Mi cuenta' },
+                { label: '¿Cómo me contacto?', message: 'Como me contacto' },
                 { label: 'Promesa de pago', message: 'Solicitar promesa de pago' }
             ];
             // Asegurarse de que el input esté deshabilitado en el menú principal
             toggleInputMode(false);
         }
 
+        // Aplicamos flex-col para que las tarjetas se apilen verticalmente como en la imagen
+        actionsContainer.className = 'quick-actions flex flex-col gap-2 mt-2 w-full px-2';
+
         actions.forEach(action => {
             const btn = document.createElement('button');
-            btn.className = 'bg-white border border-brand-lightblue/50 text-brand-cobalt text-xs font-semibold py-2 px-4 rounded-full hover:bg-gradient-to-r hover:from-brand-cobalt hover:to-brand-lightblue hover:text-white hover:border-transparent transition-all shadow-sm hover:shadow-md transform hover:-translate-y-0.5 animate-fade-in-up';
+            // Clases para emular el diseño de burbujas alargadas con borde fino
+            btn.className = 'w-full bg-white border border-gray-300 text-brand-cobalt text-sm font-medium py-3 px-4 rounded-full hover:bg-gray-50 transition-all shadow-sm transform hover:-translate-y-0.5 animate-fade-in-up text-center';
             btn.textContent = action.label;
             btn.addEventListener('click', () => {
                 chatInput.value = action.message;
