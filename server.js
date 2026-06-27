@@ -207,7 +207,7 @@ app.post('/api/chat', chatLimiter, async (req, res) => {
         
         return res.json({
             status: 'success',
-            reply: `Estos son nuestros datos bancarios:\n\n👤 **Titular:** ${titular}\n🏦 **CBU:** ${cbu}\n🔗 **Alias:** ${alias}\n\n⚠️ Una vez realizada la transferencia, es **obligatorio** enviar el comprobante para acreditar tu pago.`,
+            reply: `Estos son nuestros datos bancarios:\n\n👤 **Titular:**\n${titular}\n\n🏦 **CBU:**\n${cbu}\n\n🔗 **Alias:**\n${alias}\n\n⚠️ Una vez realizada la transferencia, es **obligatorio** enviar el comprobante para acreditar tu pago.`,
             options: [
                 { label: "📲 Enviar Comprobante", url: `https://wa.me/${ws}?text=${textWs}` },
                 { label: "Volver al menú", message: "Volver al menú" }
