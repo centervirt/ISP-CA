@@ -34,20 +34,8 @@ document.addEventListener('DOMContentLoaded', () => {
         }
 
         closeChatButton.addEventListener('click', () => {
+            // Solo ocultar el chat, no borrar la memoria ni el historial
             chatContainer.style.display = 'none';
-            // Borrar la memoria de la sesión (para que n8n arranque de cero la próxima vez)
-            localStorage.removeItem('chatSessionId');
-            
-            // Limpiar visualmente el chat log y reestablecer el mensaje inicial
-            chatLog.innerHTML = `
-            <div class="message bot self-start bg-gray-100 text-brand-navy p-3 rounded-2xl rounded-tl-sm text-sm font-sans max-w-[85%] shadow-sm">
-                Hola, soy tu asistente virtual. ¿En qué puedo ayudarte hoy?
-            </div>`;
-            
-            // Re-agregar los botones de consulta rápida
-            if (typeof appendQuickActions === 'function') {
-                appendQuickActions();
-            }
         });
 
         sendButton.addEventListener('click', sendMessage);
@@ -187,8 +175,6 @@ document.addEventListener('DOMContentLoaded', () => {
             actions = [
                 { label: 'Formas de pago', message: 'Formas de pago' },
                 { label: 'Vencimientos', message: 'Vencimientos' },
-                { label: 'Registro Mi cuenta', message: 'Registro Mi cuenta' },
-                { label: '¿Cómo me contacto?', message: 'Como me contacto' },
                 { label: 'Promesa de pago', message: 'Solicitar promesa de pago' }
             ];
             // Asegurarse de que el input esté deshabilitado en el menú principal
