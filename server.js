@@ -154,11 +154,49 @@ app.post('/api/chat', chatLimiter, async (req, res) => {
     if (message.trim().toLowerCase() === 'formas de pago') {
         return res.json({
             status: 'success',
-            reply: 'Aceptamos las siguientes formas de pago:\n\n- Pago con **Mercado Pago**\n- **Transferencia Bancaria**\n- **Contado Efectivo** en oficina\n\n¿Deseas realizar alguna otra gestión?',
+            reply: '¿Qué método de pago preferís utilizar?',
             options: [
-                { label: "Volver al menú", message: "Volver al menú" },
-                { label: "Salir", message: "Salir del chat" }
+                { label: "💳 Mercado Pago", message: "FORMA_MERCADOPAGO" },
+                { label: "🏦 Transferencia Bancaria", message: "FORMA_TRANSFERENCIA" },
+                { label: "💵 Efectivo en Oficina", message: "FORMA_EFECTIVO" },
+                { label: "🔙 Volver", message: "Volver al menú" }
             ],
+            requireInput: false
+        });
+    }
+
+    if (message === 'FORMA_MERCADOPAGO') {
+        return res.json({
+            status: 'success',
+            reply: 'Para pagar con **Mercado Pago**, por favor utilizá la opción **Ver Saldo Pendiente** desde el menú principal. Allí encontrarás el link de pago exacto para tu factura.',
+            options: [{ label: "Volver al menú", message: "Volver al menú" }],
+            requireInput: false
+        });
+    }
+
+    if (message === 'FORMA_TRANSFERENCIA') {
+        const alias = process.env.BANK_ALIAS || 'TU.ALIAS';
+        const cbu = process.env.BANK_CBU || '0000000000000000000000';
+        const titular = process.env.BANK_HOLDER || 'Titular de la cuenta';
+        const ws = process.env.SUPPORT_WHATSAPP || '5491100000000';
+        const textWs = encodeURIComponent("Hola Soporte, adjunto mi comprobante de pago por transferencia.\nNombre: \nDirección: ");
+        
+        return res.json({
+            status: 'success',
+            reply: `Estos son nuestros datos bancarios:\n\n👤 **Titular:** ${titular}\n🏦 **CBU:** ${cbu}\n🔗 **Alias:** ${alias}\n\n⚠️ Una vez realizada la transferencia, es **obligatorio** enviar el comprobante indicando tu Nombre y Dirección para acreditar el pago.`,
+            options: [
+                { label: "📲 Enviar Comprobante", url: `https://wa.me/${ws}?text=${textWs}` },
+                { label: "Volver al menú", message: "Volver al menú" }
+            ],
+            requireInput: false
+        });
+    }
+
+    if (message === 'FORMA_EFECTIVO') {
+        return res.json({
+            status: 'success',
+            reply: 'Podés abonar en efectivo acercándote a nuestra oficina central de Lunes a Viernes.\n\n📍 **Dirección:** [Actualizar en sistema]\n🕒 **Horarios:** [Actualizar en sistema]',
+            options: [{ label: "Volver al menú", message: "Volver al menú" }],
             requireInput: false
         });
     }

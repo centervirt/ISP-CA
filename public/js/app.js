@@ -204,8 +204,12 @@ document.addEventListener('DOMContentLoaded', () => {
             btn.className = 'w-full bg-white border border-gray-300 text-brand-cobalt text-sm font-medium py-3 px-4 rounded-full hover:bg-gray-50 transition-all shadow-sm transform hover:-translate-y-0.5 animate-fade-in-up text-center';
             btn.textContent = action.label;
             btn.addEventListener('click', () => {
-                chatInput.value = action.message;
-                sendMessage();
+                if (action.url) {
+                    window.open(action.url, '_blank');
+                } else {
+                    chatInput.value = action.message;
+                    sendMessage();
+                }
             });
             actionsContainer.appendChild(btn);
         });
