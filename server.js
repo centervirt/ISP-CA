@@ -151,13 +151,16 @@ app.post('/api/chat', chatLimiter, async (req, res) => {
     }
 
     // 0.8. Verificamos si quiere FORMAS DE PAGO
-    if (message.trim().toLowerCase() === 'formas de pago') {
+    if (message.trim().toLowerCase().startsWith('formas de pago')) {
+        const dniMatch = message.split('_')[1];
+        const dniForma = dniMatch ? `_${dniMatch}` : '';
+        
         return res.json({
             status: 'success',
             reply: '¿Qué método de pago preferís utilizar?',
             options: [
                 { label: "💳 Mercado Pago", message: "FORMA_MERCADOPAGO" },
-                { label: "🏦 Transferencia Bancaria", message: "FORMA_TRANSFERENCIA" },
+                { label: "🏦 Transferencia Bancaria", message: `FORMA_TRANSFERENCIA${dniForma}` },
                 { label: "💵 Efectivo en Oficina", message: "FORMA_EFECTIVO" },
                 { label: "🔙 Volver", message: "Volver al menú" }
             ],
@@ -174,16 +177,37 @@ app.post('/api/chat', chatLimiter, async (req, res) => {
         });
     }
 
-    if (message === 'FORMA_TRANSFERENCIA') {
+    if (message.startsWith('FORMA_TRANSFERENCIA')) {
+        const dniForma = message.replace('FORMA_TRANSFERENCIA_', '').replace('FORMA_TRANSFERENCIA', '').trim();
+        
+        let nombreCliente = '';
+        let direccionCliente = '';
+        
+        if (dniForma && process.env.MIKROWISP_URL && process.env.MIKROWISP_API_TOKEN) {
+            try {
+                const mwUrl = `${process.env.MIKROWISP_URL}/api/v1/GetClientsDetails`;
+                const payload = { token: process.env.MIKROWISP_API_TOKEN, cedula: dniForma };
+                const clientRes = await axios.post(mwUrl, payload, { headers: { 'Content-Type': 'application/json' }, timeout: 10000 });
+                if (clientRes.data && clientRes.data.estado === 'exito' && clientRes.data.datos && clientRes.data.datos.length > 0) {
+                    nombreCliente = clientRes.data.datos[0].nombre || '';
+                    direccionCliente = clientRes.data.datos[0].direccion || clientRes.data.datos[0].direccion_principal || '';
+                }
+            } catch (error) {
+                console.error('[MercadoPago/Transferencia] Error obteniendo datos de Mikrowisp:', error.message);
+            }
+        }
+
         const alias = process.env.BANK_ALIAS || 'TU.ALIAS';
         const cbu = process.env.BANK_CBU || '0000000000000000000000';
         const titular = process.env.BANK_HOLDER || 'Titular de la cuenta';
         const ws = process.env.SUPPORT_WHATSAPP || '5491100000000';
-        const textWs = encodeURIComponent("Hola Soporte, adjunto mi comprobante de pago por transferencia.\nNombre: \nDirección: ");
+        
+        let textoPrearmado = `Hola Soporte, adjunto mi comprobante de pago por transferencia.\nNombre: ${nombreCliente ? nombreCliente : '[Completar]'}\nDirección: ${direccionCliente ? direccionCliente : '[Completar]'}`;
+        const textWs = encodeURIComponent(textoPrearmado);
         
         return res.json({
             status: 'success',
-            reply: `Estos son nuestros datos bancarios:\n\n👤 **Titular:** ${titular}\n🏦 **CBU:** ${cbu}\n🔗 **Alias:** ${alias}\n\n⚠️ Una vez realizada la transferencia, es **obligatorio** enviar el comprobante indicando tu Nombre y Dirección para acreditar el pago.`,
+            reply: `Estos son nuestros datos bancarios:\n\n👤 **Titular:** ${titular}\n🏦 **CBU:** ${cbu}\n🔗 **Alias:** ${alias}\n\n⚠️ Una vez realizada la transferencia, es **obligatorio** enviar el comprobante para acreditar tu pago.`,
             options: [
                 { label: "📲 Enviar Comprobante", url: `https://wa.me/${ws}?text=${textWs}` },
                 { label: "Volver al menú", message: "Volver al menú" }
@@ -263,7 +287,7 @@ app.post('/api/chat', chatLimiter, async (req, res) => {
                     options.push({ label: btnPagoText, message: `PAGAR_FACTURA_DNI_${dniSaldo}` });
                 }
                 options.push({ label: "Vencimientos", message: "Vencimientos" });
-                options.push({ label: "Formas de pago", message: "Formas de pago" });
+                options.push({ label: "Formas de pago", message: `Formas de pago_${dniSaldo}` });
                 options.push({ label: "Volver al menú", message: "Volver al menú" });
                 
                 return res.json({
@@ -295,7 +319,7 @@ app.post('/api/chat', chatLimiter, async (req, res) => {
             options: [
                 { label: "Ver Saldo Pendiente", message: `VER_SALDO_DNI_${dniConfirmado}` },
                 { label: "Vencimientos", message: "Vencimientos" },
-                { label: "Formas de pago", message: "Formas de pago" }
+                { label: "Formas de pago", message: `Formas de pago_${dniConfirmado}` }
             ],
             requireInput: false
         });
