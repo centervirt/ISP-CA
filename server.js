@@ -196,6 +196,8 @@ app.post('/api/chat', chatLimiter, async (req, res) => {
 
                 let saldo = 0;
                 let replyMensaje = '';
+                let btnPagoText = "Pagar Factura";
+                
                 if (facturas.length > 0) {
                     // Sumar el total de todas las facturas pendientes
                     saldo = facturas.reduce((sum, fac) => sum + Number(fac.total || 0), 0);
@@ -210,7 +212,6 @@ app.post('/api/chat', chatLimiter, async (req, res) => {
 
                     replyMensaje = `Tu saldo pendiente actual es de: **$ ${saldoFormateado}**.\n📅 **Vencimiento:** ${fechaVenc}\n\n¿Deseas realizar alguna otra gestión?`;
                     
-                    let btnPagoText = "Pagar Factura";
                     if (facturas.length > 1) {
                         replyMensaje = `Tenés **${facturas.length} facturas pendientes** (Deuda total: $ ${saldoFormateado}).\n⚠️ Por normativas del sistema, debes abonar la factura más antigua primero.\n\n📅 **Vencimiento más antiguo:** ${fechaVenc}\n\n¿Deseas realizar el pago?`;
                         btnPagoText = "Pagar Factura Más Antigua";
@@ -219,15 +220,18 @@ app.post('/api/chat', chatLimiter, async (req, res) => {
                     replyMensaje = `¡Felicidades! 🎉 No tienes facturas pendientes, tu saldo es **$ 0,00**.\n\n¿Deseas realizar alguna otra gestión?`;
                 }
                 
+                let options = [];
+                if (facturas.length > 0) {
+                    options.push({ label: btnPagoText, message: `PAGAR_FACTURA_DNI_${dniSaldo}` });
+                }
+                options.push({ label: "Vencimientos", message: "Vencimientos" });
+                options.push({ label: "Formas de pago", message: "Formas de pago" });
+                options.push({ label: "Volver al menú", message: "Volver al menú" });
+                
                 return res.json({
                     status: 'success',
                     reply: replyMensaje,
-                    options: [
-                        { label: btnPagoText, message: `PAGAR_FACTURA_DNI_${dniSaldo}` },
-                        { label: "Vencimientos", message: "Vencimientos" },
-                        { label: "Formas de pago", message: "Formas de pago" },
-                        { label: "Volver al menú", message: "Volver al menú" }
-                    ],
+                    options: options,
                     requireInput: false
                 });
             }
