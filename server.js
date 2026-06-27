@@ -629,15 +629,16 @@ app.get('/api/portal/dashboard', authMiddleware, async (req, res) => {
             }
         }
 
-        // 2. Pedir facturas pagadas (estado: 2)
-        const payloadPaid = { token: process.env.MIKROWISP_API_TOKEN, idcliente: idcliente, estado: 2 };
+        // 2. Pedir TODAS las facturas (sin filtro de estado) para inspeccionarlas
+        const payloadPaid = { token: process.env.MIKROWISP_API_TOKEN, idcliente: idcliente };
         const paidResp = await axios.post(mwUrlInv, payloadPaid, { headers: { 'Content-Type': 'application/json' } });
         
         let historial = [];
         if (paidResp.data.estado === 'exito') {
-            let listPaid = paidResp.data.facturas || paidResp.data.datos || [];
-            if (Array.isArray(listPaid) && listPaid.length > 0) {
-                historial = listPaid;
+            let listAll = paidResp.data.facturas || paidResp.data.datos || [];
+            if (Array.isArray(listAll) && listAll.length > 0) {
+                // Filtrar las que NO sean pendientes (estado != 1, o que tengan monto pagado)
+                historial = listAll.filter(fac => fac.estado !== 1 && fac.estado !== '1');
             }
         }
 
