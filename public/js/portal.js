@@ -158,10 +158,14 @@ document.addEventListener('DOMContentLoaded', () => {
             const primeraFac = facturas[0];
             const btnContainer = document.getElementById('btn-pagar-container');
             btnContainer.classList.remove('hidden');
+            
+            const btnText = facturas.length > 1 ? '💳 Pagar Factura Más Antigua' : '💳 Pagar Próximo Vencimiento';
+            
             btnContainer.innerHTML = `
                 <button onclick="iniciarPago(${primeraFac.id}, ${primeraFac.total})" class="w-full bg-[#009ee3] text-white font-bold py-3 px-4 rounded-xl shadow-md hover:bg-[#0088c4] transition-colors flex justify-center items-center gap-2">
-                    <span>💳 Pagar Próximo Vencimiento</span>
+                    <span>${btnText}</span>
                 </button>
+                ${facturas.length > 1 ? '<p class="text-xs text-center text-gray-500 mt-2 font-medium">⚠️ Tenés múltiples facturas vencidas. Por normativa, debés abonar la más antigua primero.</p>' : ''}
             `;
         }
 

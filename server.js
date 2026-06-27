@@ -187,6 +187,13 @@ app.post('/api/chat', chatLimiter, async (req, res) => {
                     else facturas = [];
                 }
 
+                // Ordenar por fecha de vencimiento (más antigua primero)
+                facturas.sort((a, b) => {
+                    const dateA = new Date(a.vencimiento || a.fecha_vencimiento || 0);
+                    const dateB = new Date(b.vencimiento || b.fecha_vencimiento || 0);
+                    return dateA - dateB;
+                });
+
                 let saldo = 0;
                 let replyMensaje = '';
                 if (facturas.length > 0) {
@@ -202,6 +209,12 @@ app.post('/api/chat', chatLimiter, async (req, res) => {
                     }
 
                     replyMensaje = `Tu saldo pendiente actual es de: **$ ${saldoFormateado}**.\n📅 **Vencimiento:** ${fechaVenc}\n\n¿Deseas realizar alguna otra gestión?`;
+                    
+                    let btnPagoText = "Pagar Factura";
+                    if (facturas.length > 1) {
+                        replyMensaje = `Tenés **${facturas.length} facturas pendientes** (Deuda total: $ ${saldoFormateado}).\n⚠️ Por normativas del sistema, debes abonar la factura más antigua primero.\n\n📅 **Vencimiento más antiguo:** ${fechaVenc}\n\n¿Deseas realizar el pago?`;
+                        btnPagoText = "Pagar Factura Más Antigua";
+                    }
                 } else {
                     replyMensaje = `¡Felicidades! 🎉 No tienes facturas pendientes, tu saldo es **$ 0,00**.\n\n¿Deseas realizar alguna otra gestión?`;
                 }
@@ -210,7 +223,7 @@ app.post('/api/chat', chatLimiter, async (req, res) => {
                     status: 'success',
                     reply: replyMensaje,
                     options: [
-                        { label: "Pagar Factura", message: `PAGAR_FACTURA_DNI_${dniSaldo}` },
+                        { label: btnPagoText, message: `PAGAR_FACTURA_DNI_${dniSaldo}` },
                         { label: "Vencimientos", message: "Vencimientos" },
                         { label: "Formas de pago", message: "Formas de pago" },
                         { label: "Volver al menú", message: "Volver al menú" }
@@ -274,6 +287,13 @@ app.post('/api/chat', chatLimiter, async (req, res) => {
                     if (Array.isArray(invRes.data.datos)) facturas = invRes.data.datos;
                     else facturas = [];
                 }
+
+                // Ordenar por fecha de vencimiento (más antigua primero)
+                facturas.sort((a, b) => {
+                    const dateA = new Date(a.vencimiento || a.fecha_vencimiento || 0);
+                    const dateB = new Date(b.vencimiento || b.fecha_vencimiento || 0);
+                    return dateA - dateB;
+                });
 
                 if (facturas.length > 0) {
                     const factura = facturas[0]; 
@@ -625,6 +645,12 @@ app.get('/api/portal/dashboard', authMiddleware, async (req, res) => {
             let list = invResp.data.facturas || invResp.data.datos || [];
             if (Array.isArray(list)) {
                 facturas = list;
+                // Ordenar por fecha de vencimiento (más antigua primero)
+                facturas.sort((a, b) => {
+                    const dateA = new Date(a.vencimiento || a.fecha_vencimiento || 0);
+                    const dateB = new Date(b.vencimiento || b.fecha_vencimiento || 0);
+                    return dateA - dateB;
+                });
                 saldoTotal = facturas.reduce((sum, fac) => sum + Number(fac.total || 0), 0);
             }
         }
