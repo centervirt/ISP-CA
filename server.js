@@ -217,10 +217,20 @@ app.post('/api/chat', chatLimiter, async (req, res) => {
     }
 
     if (message === 'FORMA_EFECTIVO') {
+        const address = process.env.OFFICE_ADDRESS || '[Actualizar en sistema]';
+        const hours = process.env.OFFICE_HOURS || '[Actualizar en sistema]';
+        const gpsUrl = process.env.OFFICE_GPS || '';
+
+        let options = [];
+        if (gpsUrl) {
+            options.push({ label: "📍 Ver ubicación en mapa", url: gpsUrl });
+        }
+        options.push({ label: "Volver al menú", message: "Volver al menú" });
+
         return res.json({
             status: 'success',
-            reply: 'Podés abonar en efectivo acercándote a nuestra oficina central de Lunes a Viernes.\n\n📍 **Dirección:** [Actualizar en sistema]\n🕒 **Horarios:** [Actualizar en sistema]',
-            options: [{ label: "Volver al menú", message: "Volver al menú" }],
+            reply: `Podés abonar en efectivo acercándote a nuestra oficina.\n\n📍 **Dirección:**\n${address}\n\n🕒 **Horarios:**\n${hours}`,
+            options: options,
             requireInput: false
         });
     }
