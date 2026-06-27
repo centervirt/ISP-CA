@@ -256,7 +256,6 @@ app.post('/api/chat', chatLimiter, async (req, res) => {
             reply: `¡Datos confirmados con éxito! ✅\n\n¿Qué gestión deseas realizar en tu cuenta?`,
             options: [
                 { label: "Ver Saldo Pendiente", message: `VER_SALDO_DNI_${dniConfirmado}` },
-                { label: "Pagar Factura", message: `PAGAR_FACTURA_DNI_${dniConfirmado}` },
                 { label: "Vencimientos", message: "Vencimientos" },
                 { label: "Formas de pago", message: "Formas de pago" }
             ],
